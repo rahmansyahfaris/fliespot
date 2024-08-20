@@ -1,0 +1,5 @@
+__pycache__/
+cache/
+object_detection_model/
+test_dev/
+.env
