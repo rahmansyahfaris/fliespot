@@ -3,3 +3,5 @@ cache/
 object_detection_model/
 test_dev/
 .env
+config/telegram_info.yaml
+config/uri.yaml

@@ -6,6 +6,8 @@ from functools import partial
 # command functions
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Welcome to Fliespot Bot")
+    # debugging
+    print(f'User ({update.message.chat.id}) did /start')
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Help is still being developed")
@@ -42,6 +44,16 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE, BOT
 
     await update.message.reply_text(response)
 
+async def send_test_message(context):
+    try:
+        #chat = await context.bot.get_chat(username) # test getting chat id with username (failed)
+        #chat_id = chat.id
+        chat_id = "1172740201" # not using username, using chat id and it works
+        await context.bot.send_message(chat_id=chat_id, text="test")
+    except Exception as e:
+        #print(f"Failed to send message to @{username}: {e}")
+        print(e)
+
 # error logging
 async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(f'Update {update} caused error {context.error}')
@@ -54,6 +66,7 @@ def crazyTelegram(token, username, bot_username):
 
 def startTelegramBot(TOKEN, username, bot_username):
 
+    # username not utilized here, using username is a failure for now
     print("Starting bot...")
     app = Application.builder().token(TOKEN).build()
 
@@ -67,6 +80,9 @@ def startTelegramBot(TOKEN, username, bot_username):
 
     # error handler
     app.add_error_handler(error)
+
+    job_queue = app.job_queue
+    job_queue.run_repeating(send_test_message, interval=3, first=0)
 
     # check updates constantly if there is user message
     print("Polling...")

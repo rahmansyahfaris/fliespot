@@ -1,0 +1,4 @@
+default_height: 1
+led_blink_duration: 2
+linear_step_range: 0.1
+rotation_step_range: 1

@@ -13,6 +13,12 @@ import process_functions
 import crazy_camera
 import crazy_telegram
 
+"""
+currently, the finishCrazyCamera event serves as an indication of camera trigger
+(even though the camera has not yet been installed) as well as an indication of
+crazyCameraProcess end or termination
+"""
+
 # Load the environment variables
 load_dotenv()
 
@@ -54,28 +60,32 @@ def crazyFlight(uri,
                 token,
                 bot_username,
                 username,
-                event,
-                abort_event):
+                finishCrazyFlight,
+                crazyAbortEvent):
 
-    crazyCameraEvent = Event()
+    finishCrazyCamera = Event() # event to indicate that crazyCameraProcess has finished/returned
+    """ cameraAbortEvent is an event that breaks the crazyCamera loop into triggering finishCrazyCamera, ending 
+    (terminating) the crazyCameraProcess. It can be triggered if crazyAbortEvent is triggered. The purpose is just
+    to print "Camera Aborted" when the crazyCameraProcess finished, to differentiate termination due to abort and
+    other terminations """
     cameraAbortEvent = Event()
-    crazyCameraProcess = Process(target=crazy_camera.crazyCamera, args=(crazyCameraEvent, abort_event, cameraAbortEvent,))
+    crazyCameraProcess = Process(target=crazy_camera.crazyCamera, args=(finishCrazyCamera, crazyAbortEvent, cameraAbortEvent,))
     crazyTelegramProcess = Process(target=crazy_telegram.crazyTelegram, args=(token, bot_username, username))
     crazyCameraProcess.start()
     crazyTelegramProcess.start()
 
     iter = 20
     for i in range(iter):
-        if abort_event.is_set(): # checks for crazyAbortEvent
+        if crazyAbortEvent.is_set(): # checks for crazyAbortEvent
             print("Aborting Flight")
             break
-        if crazyCameraEvent.is_set(): # checks for crazyCameraEvent
+        if finishCrazyCamera.is_set(): # checks for finishCrazyCamera
             print("Crazy Camera Trigger")
             break
         print(f"crazyFlight: {i+1} of {iter}")
         time.sleep(1)
 
-    if abort_event.is_set():
+    if crazyAbortEvent.is_set():
         cameraAbortEvent.wait()
         print("Camera Aborted")
 
@@ -91,7 +101,7 @@ def crazyFlight(uri,
         print("Crazy Telegram Process Terminated")
 
     print("Crazy Flight Process Terminating")
-    event.set()
+    finishCrazyFlight.set()
     return
 
 

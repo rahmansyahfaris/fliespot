@@ -30,9 +30,9 @@ def crazyFlightPolling(event):
 def startCrazyFlight():
     # basically starting the flying mechanism, polling for flight abort
     global processes, crazyFlightProcess, crazyFlightThread
-    crazyFlightEvent = Event()
-    crazyAbortEvent = Event()
-    crazyFlightThread = Thread(target=crazyFlightPolling, args=(crazyFlightEvent,))
+    finishCrazyFlight = Event() # event to indicate that crazyFlight process has finished/returned
+    crazyAbortEvent = Event() # event to abort and cancel all activities
+    crazyFlightThread = Thread(target=crazyFlightPolling, args=(finishCrazyFlight,))
     crazyFlightProcess = Process(target=crazy_flight.crazyFlight,
                                  args=(crazy_flight.tempURI,
                                        crazy_flight.tempDEFAULT_HEIGHT,
@@ -40,12 +40,13 @@ def startCrazyFlight():
                                        crazy_flight.tempTOKEN,
                                        crazy_flight.tempBOT_USERNAME,
                                        crazy_flight.tempUSERNAME,
-                                       crazyFlightEvent,
+                                       finishCrazyFlight,
                                        crazyAbortEvent,))
     crazyFlightThread.start() # start thread that polls
     crazyFlightProcess.start() # start separate process
     processes.append(crazyFlightProcess) # include the process in the processes list
-    flyButton.config(text="Stop",command=lambda: stopCrazyFlight(crazyAbortEvent)) # what to do with the button
+    # change button to now function as abort/cancel
+    flyButton.config(text="Stop",command=lambda: stopCrazyFlight(crazyAbortEvent))
     return
 
 def stopCrazyFlight(event):
