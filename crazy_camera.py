@@ -10,20 +10,21 @@ import logging
 from multiprocessing import Queue, Process, Event
 from threading import Thread
 
-def crazyCamera(finishCrazyCamera, crazyAbortEvent, cameraAbortEvent):
+def crazyCamera(common_event):
 
+    # this iterations and loops simulate camera activity
     iter = 10
     for i in range(iter):
-        if crazyAbortEvent.is_set():
+        if common_event['crazyAbortEvent'].is_set():
             break
         print(f"crazyCamera: {i+1} of {iter}")
         time.sleep(1)
     
     print("Crazy Camera Process Terminating")
-    if crazyAbortEvent.is_set():
+    if common_event['crazyAbortEvent'].is_set():
         print("Aborting Camera")
-        cameraAbortEvent.set()
+        common_event['cameraAbortEvent'].set()
         return
     
-    finishCrazyCamera.set()
+    common_event['finishCrazyCamera'].set()
     return

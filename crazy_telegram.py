@@ -59,9 +59,10 @@ async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(f'Update {update} caused error {context.error}')
 
 
-def crazyTelegram(token, username, bot_username):
+def crazyTelegram(telegram_info):
 
-    startTelegramBot(token, username, bot_username)
+    # we are using username at the moment which is not going great, we will resort to using chat id in the future
+    startTelegramBot(telegram_info['bot_token'], telegram_info['username'], telegram_info['bot_username'])
 
 
 def startTelegramBot(TOKEN, username, bot_username):
@@ -81,8 +82,9 @@ def startTelegramBot(TOKEN, username, bot_username):
     # error handler
     app.add_error_handler(error)
 
-    job_queue = app.job_queue
-    job_queue.run_repeating(send_test_message, interval=3, first=0)
+    # sending test messages to specific chat id (commented because annoying)
+    #job_queue = app.job_queue
+    #job_queue.run_repeating(send_test_message, interval=3, first=0)
 
     # check updates constantly if there is user message
     print("Polling...")

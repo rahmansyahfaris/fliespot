@@ -1,11 +1,18 @@
-something need to be added before properly using the code (because it is gitignored)
+CHANGES:
+Environment variables and config overhaul, now using yaml instead of .env
+Now using shared dictionary with manager that contains the events centralized in main
+All events are now centralized in main
+Other changes and future plans that I don't remember
+Events will be deleted in the future, we are going to use queue to differentiate states and phases
 
-it is a .env file, it contains:
+somethings need to be added before properly using the code (because it is gitignored)
 
-URI=radio://0/80/2M/E7E7E7E7E7
-DEFAULT_HEIGHT=1
-LED_BLINK_DURATION=2
-STEP_RANGE=0.1
-TOKEN=<@your_telegram_bot_token>
-BOT_USERNAME=<@your_telegram_bot_name>
-USERNAME=<your_telegram_username>
+first file is config/telegram_info.yaml, it contains:
+
+bot_username: <@your_telegram_bot_name>
+bot_token: <your_telegram_bot_token>
+username: <your_telegram_username_this_is_still_non_functional>
+
+second file is config/uri.yaml, it contains:
+
+uri: <your_crazyflie_drone_uri>
