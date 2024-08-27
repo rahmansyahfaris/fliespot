@@ -37,34 +37,38 @@ def update_uri(new_uri):
     uri['uri'] = new_uri
     return
 
-def crazyFlightWait(event):
-    event.wait()
-    if crazyFlightProcess.is_alive(): # check if the process still running
-        crazyFlightProcess.terminate() # abruptly stops the process
-    # crazyFlightProcess.join() # cleaning up before continuing
-    print("Crazy Flight Process Terminated")
-    processes.remove(crazyFlightProcess) # remove the process in the processes list
-    flyButton.config(text="Fly",command=startCrazyFlight) # reset the button
+def crazyWait(queue: Queue):
+    while(True):
+        # queue is common_event_queue
+        # queue_data is the data (status) we get from common_event_queue, which is the dictionary with 2 keys or more
+        # first key is feature which is what part of process or feature does it relate (flight, camera, or anything else)
+        # second key is state which is what is the state of the feature now that is given
+        # there may be other keys to add more details, descriptions, or contexts
+        # unfortunately, this is all failed attempt
+        queue_data = queue.get()
+        if (queue_data['feature'] == 'crazy_flight'):
+            if (queue_data['state'] == 'is_returned'):
+                if crazyFlightProcess.is_alive(): # check if the process still running
+                    crazyFlightProcess.terminate() # abruptly stops the process
+                # crazyFlightProcess.join() # cleaning up before continuing
+                print("Crazy Flight Process Terminated")
+                processes.remove(crazyFlightProcess) # remove the process in the processes list
+                flyButton.config(text="Fly",command=startCrazyFlight) # reset the button
+                break
+        # elif (queue_data['feature'] == 'crazy_camera') 
     return
 
 def startCrazyFlight():
     # basically starting the flying mechanism, polling for flight abort
     global processes, crazyFlightProcess, crazyFlightThread
 
-    # it is important to clear each events before starting again,
-    # if not, it will only work the first time, the next one will be error
-    common_event['finishCrazyFlight'].clear()
-    common_event['crazyAbortEvent'].clear()
-    common_event['finishCrazyCamera'].clear()
-    common_event['cameraAbortEvent'].clear()
-
-    crazyFlightThread = Thread(target=crazyFlightWait, args=(common_event["finishCrazyFlight"],))
-    crazyFlightProcess = Process(target=crazy_flight.crazyFlight, args=(uri, telegram_info, config, common_event,))
+    crazyFlightThread = Thread(target=crazyWait, args=(common_event_queue,))
+    crazyFlightProcess = Process(target=crazy_flight.crazyFlight, args=(uri, telegram_info, config, common_event_queue,))
     crazyFlightThread.start() # start thread that polls
     crazyFlightProcess.start() # start separate process
     processes.append(crazyFlightProcess) # include the process in the processes list
     # change button to now function as abort/cancel
-    flyButton.config(text="Stop",command=lambda: stopCrazyFlight(common_event["crazyAbortEvent"]))
+    flyButton.config(text="Stop",command=lambda: stopCrazyFlight(common_event_queue))
     return
 
 def stopCrazyFlight(event):
@@ -121,24 +125,10 @@ def on_closing():
 
 if __name__ == "__main__":
 
-    # unifying events in the beginning, putting them inside a shared dictionary with manager
-
-    manager = Manager()
-
-    common_event = manager.dict()
-
-    common_event['finishCrazyFlight'] = manager.Event()
-    common_event['crazyAbortEvent'] = manager.Event()
-    """ cameraAbortEvent is an event that breaks the crazyCamera loop into triggering finishCrazyCamera, ending 
-    (terminating) the crazyCameraProcess. It can be triggered if crazyAbortEvent is triggered. The purpose is just
-    to print "Camera Aborted" when the crazyCameraProcess finished, to differentiate termination due to abort and
-    other terminations """
-    common_event['cameraAbortEvent'] = manager.Event()
-    """
-    currently, the finishCrazyCamera event serves as an indication of camera trigger
-    (even though the camera has not yet been installed) as well as an indication of
-    crazyCameraProcess end or termination
-    """
-    common_event['finishCrazyCamera'] = manager.Event() # event to indicate that crazyCameraProcess has finished/returned
+    # now we are using queue to signal events with flexibility
+    # it will contain a dictionary, at least with 2 keys, may have more for added details and contexts
+    # go to the function crazyWait for more details about this queue mechanism,
+    # it is a function that will poll incoming data of the queue and act according the data given
+    common_event_queue = Queue()
 
     createTkinterGUI()
