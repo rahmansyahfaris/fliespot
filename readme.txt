@@ -2,6 +2,7 @@ CHANGES:
 Environment variables and config overhaul, now using yaml instead of .env
 Now using shared dictionary with manager that contains the events centralized in main
 All events are now centralized in main
+Arguments are now more wrapped using dictionaries
 Other changes and future plans that I don't remember
 Events will be deleted in the future, we are going to use queue to differentiate states and phases
 

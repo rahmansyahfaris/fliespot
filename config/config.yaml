@@ -1,4 +1,8 @@
 default_height: 1
+default_velocity: 0.2
+default_hold_time: 1
+default_yaw_rate: 45
+logging_decimal_places: 2
+shortened_logging_parameters: True
+
 led_blink_duration: 2
-linear_step_range: 0.1
-rotational_step_range: 1

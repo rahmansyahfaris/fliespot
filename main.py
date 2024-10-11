@@ -41,7 +41,7 @@ def crazyFlightWait(event):
     event.wait()
     if crazyFlightProcess.is_alive(): # check if the process still running
         crazyFlightProcess.terminate() # abruptly stops the process
-    # crazyFlightProcess.join() # cleaning up before continuing
+    crazyFlightProcess.join() # cleaning up before continuing
     print("Crazy Flight Process Terminated")
     processes.remove(crazyFlightProcess) # remove the process in the processes list
     flyButton.config(text="Fly",command=startCrazyFlight) # reset the button
@@ -87,7 +87,7 @@ def createTkinterGUI():
     entryURI.pack(pady=10)
 
     # Create a Button for URI widget
-    buttonURI = tk.Button(root, text="Change URI")
+    buttonURI = tk.Button(root, text="Change URI", command=startUpdateEnv)
     buttonURI.pack(pady=10)
 
     # Create a Label for URI widget to display the text
@@ -127,7 +127,7 @@ if __name__ == "__main__":
 
     common_event = manager.dict()
 
-    common_event['finishCrazyFlight'] = manager.Event()
+    common_event['finishCrazyFlight'] = manager.Event() # event to indicate the end of crazyFlightProcess
     common_event['crazyAbortEvent'] = manager.Event()
     """ cameraAbortEvent is an event that breaks the crazyCamera loop into triggering finishCrazyCamera, ending 
     (terminating) the crazyCameraProcess. It can be triggered if crazyAbortEvent is triggered. The purpose is just

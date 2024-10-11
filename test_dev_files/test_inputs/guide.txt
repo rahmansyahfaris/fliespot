@@ -1,0 +1,58 @@
+PARAMETERS:
+
+title:first command,x:0,y:0,z:0,velocity:0.2,yaw:0,rate:45,hold:1,note:this is the first command
+
+EXPLANATION:
+
+<title>
+title of the command to give some documentation or context
+can contain spaces and tabs but of course not line breaks (because the lines indicate the individual commands)
+title can be useful for marking in logging, observing, and monitoring purposes as it can be set to print in the console
+
+<x>
+target distance of moving forward (positive) or backward (negative)
+default value is 0
+in meters
+
+<y>
+target distance of moving left (positive) or right (negative)
+default value is 0
+in meters
+
+<z>
+this is suppose to be the target distance of moving up (positive) or down (negative)
+in meters
+this parameter is not tested because the project does not dwell on changing altitudes
+it is not conventional to include this parameter unless you know what you are doing
+this parameter exists simply for further development, it is not yet developed, it doesn't even work
+if you want to change drone's flight height/altitude, change the DEFAULT_HEIGHT instead of using this parameter
+
+<velocity>
+velocity of the drone's movement
+default value is default_velocity
+in meters per second (supposedly but we concluded that it seems to be not accurately)
+
+<yaw>
+target angle of rotating/turning counter-clockwise/left (positive) or clockwise/right (negative)
+default value is 0
+in degrees
+
+<rate>
+angular velocity of the drone when rotating to target yaw
+default value is default_yaw_rate
+in degrees per second
+
+<hold>
+amount of time to pause before proceeding to the next command after finishing the current command
+default value is default_hold_time
+in seconds
+we concluded that the value must be at least 1 second to give the drone time to adjust
+you can use 0 seconds but the next command should only be just a hold and with a value of at least 1 second (for marking purposes)
+
+<note>
+note of the command to give some documentation or context
+can contain spaces and tabs but of course not line breaks (because the lines indicate the individual commands)
+
+please note that these conditions must be met or flight will not happen and will throw exception
+x, y, and z must be 0 and rate must be greater than 0 if you want to use yaw
+yaw must be 0 and velocity must be greater than 0 if you want to use x, y, and z
