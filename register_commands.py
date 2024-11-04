@@ -1,3 +1,8 @@
+import os
+import sys
+
+# Test Input Split 2: where only either yaw, x, or y that can have non zero value (unfinished)
+
 def register_inputs(file_path):
     # Default values for the command keys
     DEFAULT_VALUES = {
@@ -8,7 +13,7 @@ def register_inputs(file_path):
         'velocity': 0.2,
         'yaw': 0.0,
         'rate': 30,
-        'hold': 1.0,
+        'hold': 2.0,
         'note': ''
     }
 
@@ -42,8 +47,12 @@ def register_inputs(file_path):
         # check if commands is empty
         if commands:
             for command in commands:
-                if command['yaw'] != 0 and (command['x'] != 0 or command['y'] != 0 or command['z'] != 0):
-                    raise ValueError("yaw value can't be non zero if either of x, y, and z are non zero (you can't combine rotational and linear movements)")
+                total_movement_input = int(bool(command['yaw']))+int(bool(command['x']))+int(bool(command['y']))+int(bool(command['z']))
+                movement_invalid = True
+                if total_movement_input==1 or total_movement_input==0:
+                    movement_invalid = False
+                if movement_invalid:
+                    raise ValueError(f"Invalid movement input: only either yaw, x, y, or z can have non-zero value, total input given is {total_movement_input} when only 0 or 1 is allowed")
             return commands
         else:
             # if commands is empty

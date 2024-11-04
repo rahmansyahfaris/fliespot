@@ -6,6 +6,7 @@ import crazy_flight
 import update_env_config
 from threading import Thread
 import os
+import sys
 import yaml
 
 # configuration
@@ -14,17 +15,33 @@ import yaml
 # ex: config['default_height'] will get the value of default_height in config.yaml
 # "config" is used not because the file name is config.yaml but because the
 # variable assigned to yaml.safe_load (the one with equal sign) in the with statement is called config
-with open('config/uri.yaml','r') as file:
-    uri = yaml.safe_load(file)
-    # the default and example URI is radio://0/80/2M/E7E7E7E7E7
-with open('config/telegram_info.yaml','r') as file:
-    telegram_info = yaml.safe_load(file)
-with open('config/config.yaml','r') as file:
-    config = yaml.safe_load(file)
+
+
+def load_yaml_config(file_path):
+    """Load a YAML configuration file. If loading fails, raise an exception to stop the program."""
+    try:
+        with open(file_path, 'r') as file:
+            return yaml.safe_load(file)
+    except FileNotFoundError:
+        print(f"Critical error: '{file_path}' not found. Exiting.")
+        sys.exit(1)  # Exits the program with an error code
+    except yaml.YAMLError as e:
+        print(f"Critical error parsing '{file_path}': {e}. Exiting.")
+        sys.exit(1)  # Exits the program with an error code
+
+# Load each configuration file
+uri = load_yaml_config('config/uri.yaml')
+telegram_info = load_yaml_config('config/telegram_info.yaml')
+config = load_yaml_config('config/config.yaml')
 
 
 processes = [] # to list all child processes so that we can close all of them at once or do something about them
 displayURIText = f"URI: {uri['uri']}"
+
+def clear_events(events):
+    for event in events:
+        event.clear()
+
 
 def startUpdateEnv():
     input_text = entryURI.get()
@@ -44,7 +61,10 @@ def crazyFlightWait(event):
     crazyFlightProcess.join() # cleaning up before continuing
     print("Crazy Flight Process Terminated")
     processes.remove(crazyFlightProcess) # remove the process in the processes list
-    flyButton.config(text="Fly",command=startCrazyFlight) # reset the button
+    # flyButton.config(text="Fly",command=startCrazyFlight) # reset the button (commented because not thread-safe
+    # use the code below (root.after) instead for thread safety and this should be used for all elements outside the
+    # main thread like this one crazyFlightWait which is a function that will be run as a thread)
+    root.after(0, lambda: flyButton.config(text="Fly", command=startCrazyFlight, state="normal")) # reset the button
     return
 
 def startCrazyFlight():
@@ -53,10 +73,10 @@ def startCrazyFlight():
 
     # it is important to clear each events before starting again,
     # if not, it will only work the first time, the next one will be error
-    common_event['finishCrazyFlight'].clear()
-    common_event['crazyAbortEvent'].clear()
-    common_event['finishCrazyCamera'].clear()
-    common_event['cameraAbortEvent'].clear()
+    clear_events([common_event['finishCrazyFlight'],
+                  common_event['crazyAbortEvent'],
+                  common_event['finishCrazyCamera'],
+                  common_event['cameraAbortEvent']])
 
     crazyFlightThread = Thread(target=crazyFlightWait, args=(common_event["finishCrazyFlight"],))
     crazyFlightProcess = Process(target=crazy_flight.crazyFlight, args=(uri, telegram_info, config, common_event,))
@@ -68,7 +88,7 @@ def startCrazyFlight():
     return
 
 def stopCrazyFlight(event):
-    flyButton.config(text="Terminating...") # button disabled waiting
+    flyButton.config(text="Terminating...", state="disabled") # button disabled waiting
     event.set()
     # the event.set is to stop the crazyFlightThread (crazyFlightPolling function)
     # that contains the rest of the finishing tasks like resetting the buttons, etc
@@ -95,18 +115,43 @@ def createTkinterGUI():
     displayURI.pack(pady=10)
 
     # Crazy flight button
-    flyButton = tk.Button(root, text="Fly", command=startCrazyFlight)
+    flyButton = tk.Button(root, text="Fly!", command=startCrazyFlight)
     flyButton.pack(pady=10)
 
     # LED blink test button
     ledBlinkButton = tk.Button(root, text="Blink Test", command=lambda: crazy_flight.ledBlink(uri, config))
     ledBlinkButton.pack(pady=10)
 
+    open_config_button = tk.Button(root, text="Open Config Window", command=openConfig)
+    open_config_button.pack(pady=20)
+
     # Handle the close event to terminate the process
     root.protocol("WM_DELETE_WINDOW", on_closing)
 
     # Start the Tkinter event loop
     root.mainloop()
+
+def openConfig():
+    # Start a new window for config
+    config_window = tk.Toplevel(root)
+    config_window.title("Configuration")
+
+    config_window.geometry("300x200")
+
+    # Add widgets to the configuration window
+    tk.Label(config_window, text="Setting 1:").pack(pady=5)
+    entry1 = tk.Entry(config_window, width=30)
+    entry1.pack(pady=5)
+    
+    tk.Label(config_window, text="Setting 2:").pack(pady=5)
+    entry2 = tk.Entry(config_window, width=30)
+    entry2.pack(pady=5)
+    
+    # Add a save button
+    # tk.Button(config_window, text="Save Settings", command=lambda: save_settings(entry1.get(), entry2.get())).pack(pady=10)
+    
+    # Add a close button
+    tk.Button(config_window, text="Close", command=config_window.destroy).pack(pady=10)
 
 # This function execute as an additional procedure before truly closing the program
 def on_closing():
@@ -116,7 +161,7 @@ def on_closing():
     for process in processes:
         if process.is_alive():
             process.terminate()
-        process.join()
+            process.join()
     root.destroy()
 
 if __name__ == "__main__":
