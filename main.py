@@ -36,12 +36,12 @@ config = load_yaml_config('config/config.yaml')
 
 
 processes = [] # to list all child processes so that we can close all of them at once or do something about them
+threads = []
 displayURIText = f"URI: {uri['uri']}"
 
 def clear_events(events):
     for event in events:
         event.clear()
-
 
 def startUpdateEnv():
     input_text = entryURI.get()
@@ -54,17 +54,22 @@ def update_uri(new_uri):
     uri['uri'] = new_uri
     return
 
-def crazyFlightWait(event):
-    event.wait()
+def crazyFlightWait(common_event):
+    common_event["finishCrazyFlight"].wait()
     if crazyFlightProcess.is_alive(): # check if the process still running
         crazyFlightProcess.terminate() # abruptly stops the process
-    crazyFlightProcess.join() # cleaning up before continuing
+        crazyFlightProcess.join() # cleaning up before continuing
     print("Crazy Flight Process Terminated")
     processes.remove(crazyFlightProcess) # remove the process in the processes list
+    threads.remove(crazyFlightThread)
+    print("crazyFlightWait returned 1")
     # flyButton.config(text="Fly",command=startCrazyFlight) # reset the button (commented because not thread-safe
     # use the code below (root.after) instead for thread safety and this should be used for all elements outside the
     # main thread like this one crazyFlightWait which is a function that will be run as a thread)
-    root.after(0, lambda: flyButton.config(text="Fly", command=startCrazyFlight, state="normal")) # reset the button
+    if not common_event["shutdown"].is_set():
+        print("yep went here")
+        root.after(0, lambda: flyButton.config(text="Fly", command=startCrazyFlight, state="normal")) # reset the button
+    print("crazyFlightWait returned 2")
     return
 
 def startCrazyFlight():
@@ -78,11 +83,12 @@ def startCrazyFlight():
                   common_event['finishCrazyCamera'],
                   common_event['cameraAbortEvent']])
 
-    crazyFlightThread = Thread(target=crazyFlightWait, args=(common_event["finishCrazyFlight"],))
+    crazyFlightThread = Thread(target=crazyFlightWait, args=(common_event,))
     crazyFlightProcess = Process(target=crazy_flight.crazyFlight, args=(uri, telegram_info, config, common_event,))
     crazyFlightThread.start() # start thread that polls
     crazyFlightProcess.start() # start separate process
     processes.append(crazyFlightProcess) # include the process in the processes list
+    threads.append(crazyFlightThread)
     # change button to now function as abort/cancel
     flyButton.config(text="Stop",command=lambda: stopCrazyFlight(common_event["crazyAbortEvent"]))
     return
@@ -138,6 +144,9 @@ def openConfig():
 
     config_window.geometry("300x200")
 
+    # make the window locked (modal locked window)
+    config_window.grab_set()
+
     # Add widgets to the configuration window
     tk.Label(config_window, text="Setting 1:").pack(pady=5)
     entry1 = tk.Entry(config_window, width=30)
@@ -153,16 +162,39 @@ def openConfig():
     # Add a close button
     tk.Button(config_window, text="Close", command=config_window.destroy).pack(pady=10)
 
+    # Extra closing procedure for unlocking window from modal locked mode
+    config_window.protocol("WM_DELETE_WINDOW", lambda: close_config_window(config_window))
+
+# Extra closing procedure function for unlocking window from modal locked mode
+def close_config_window(window):
+    # Release the modal lock and destroy the window
+    window.grab_release()
+    window.destroy()
+
 # This function execute as an additional procedure before truly closing the program
 def on_closing():
     global processes
+
+    # Set abort events to signal processes to terminate gracefully
+    common_event["shutdown"].set()
+    common_event['crazyAbortEvent'].set()
+    #time.sleep(0.5) # a little time
+
+    # joining threads before processes, this is crucial
+    for thread in threads:
+        if thread.is_alive():
+            thread.join()
+    
     # update_env_config.change_env_value("URI", crazy_flight.tempURI)
     # # URI will not be saved for now
+    
     for process in processes:
         if process.is_alive():
             process.terminate()
             process.join()
+
     root.destroy()
+    print("root destroyed")
 
 if __name__ == "__main__":
 
@@ -185,5 +217,10 @@ if __name__ == "__main__":
     crazyCameraProcess end or termination
     """
     common_event['finishCrazyCamera'] = manager.Event() # event to indicate that crazyCameraProcess has finished/returned
+    common_event['shutdown'] = manager.Event() # event to indicate that close button is pressed
+
+    #common_var = manager.dict()
+
+    #common_var[]
 
     createTkinterGUI()

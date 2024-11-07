@@ -24,7 +24,6 @@ def crazyCamera(common_event):
     if common_event['crazyAbortEvent'].is_set():
         print("Aborting Camera")
         common_event['cameraAbortEvent'].set()
-        return
     
     common_event['finishCrazyCamera'].set()
     return
