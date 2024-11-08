@@ -21,18 +21,18 @@ cflib.crtp.init_drivers()
 # update_tempURI function now placed in main.py
 
 # for LED blink test
-def ledBlink(uri, config):
+def ledBlink(common_var):
     print("Starting blink")
     # Blink the LED using loop
-    with SyncCrazyflie(uri['uri'], cf=Crazyflie(rw_cache='./cache')) as scf:
+    with SyncCrazyflie(common_var['uri']['uri'], cf=Crazyflie(rw_cache='./cache')) as scf:
         print("Connected to Crazyflie")
-        time.sleep(config['led_blink_duration'])
+        time.sleep(common_var['config']['led_blink_duration'])
     print("Blink completed")
     return
 
-def crazyFlight(uri, telegram_info, config, common_event):
+def crazyFlight(common_var, common_event):
     crazyCameraProcess = Process(target=crazy_camera.crazyCamera, args=(common_event,))
-    crazyTelegramProcess = Process(target=crazy_telegram.crazyTelegram, args=(telegram_info,))
+    crazyTelegramProcess = Process(target=crazy_telegram.crazyTelegram, args=(common_var,))
     crazyCameraProcess.start()
     crazyTelegramProcess.start()
 
@@ -45,7 +45,7 @@ def crazyFlight(uri, telegram_info, config, common_event):
         if common_event['finishCrazyCamera'].is_set(): # checks for finishCrazyCamera
             print("Crazy Camera Trigger")
             break
-        print(f"crazyFlight: {i+1} of {iter} (URI: {uri['uri']})")
+        print(f"crazyFlight: {i+1} of {iter} (URI: {common_var['uri']['uri']})")
         time.sleep(1)
 
     if common_event["crazyAbortEvent"].is_set():

@@ -59,13 +59,13 @@ async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(f'Update {update} caused error {context.error}')
 
 
-def crazyTelegram(telegram_info):
+def crazyTelegram(common_var):
 
     # we are using username at the moment which is not going great, we will resort to using chat id in the future
-    startTelegramBot(telegram_info['bot_token'], telegram_info['username'], telegram_info['bot_username'])
+    startTelegramBot(common_var['telegram_info']['bot_token'], common_var['telegram_info']['user_id'], common_var['telegram_info']['bot_username'])
 
 
-def startTelegramBot(TOKEN, username, bot_username):
+def startTelegramBot(TOKEN, user_id, bot_username):
 
     # username not utilized here, using username is a failure for now
     print("Starting bot...")

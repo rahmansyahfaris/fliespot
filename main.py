@@ -5,6 +5,7 @@ import threading
 import crazy_flight
 import update_env_config
 from threading import Thread
+from register_commands import register_inputs, load_yaml_config
 import os
 import sys
 import yaml
@@ -16,28 +17,15 @@ import yaml
 # "config" is used not because the file name is config.yaml but because the
 # variable assigned to yaml.safe_load (the one with equal sign) in the with statement is called config
 
-
-def load_yaml_config(file_path):
-    """Load a YAML configuration file. If loading fails, raise an exception to stop the program."""
-    try:
-        with open(file_path, 'r') as file:
-            return yaml.safe_load(file)
-    except FileNotFoundError:
-        print(f"Critical error: '{file_path}' not found. Exiting.")
-        sys.exit(1)  # Exits the program with an error code
-    except yaml.YAMLError as e:
-        print(f"Critical error parsing '{file_path}': {e}. Exiting.")
-        sys.exit(1)  # Exits the program with an error code
-
-# Load each configuration file
+# Load each configuration file (commented because moved to main block)
+"""
 uri = load_yaml_config('config/uri.yaml')
 telegram_info = load_yaml_config('config/telegram_info.yaml')
 config = load_yaml_config('config/config.yaml')
-
+"""
 
 processes = [] # to list all child processes so that we can close all of them at once or do something about them
-threads = []
-displayURIText = f"URI: {uri['uri']}"
+threads = [] # to list all the threads
 
 def clear_events(events):
     for event in events:
@@ -46,12 +34,12 @@ def clear_events(events):
 def startUpdateEnv():
     input_text = entryURI.get()
     update_uri(input_text)
-    displayURIText = f"URI: {uri['uri']}"
+    displayURIText = f"URI: {common_var['uri']['uri']}"
     displayURI.config(text=displayURIText)
     return
 
 def update_uri(new_uri):
-    uri['uri'] = new_uri
+    common_var['uri']['uri'] = new_uri
     return
 
 def crazyFlightWait(common_event):
@@ -62,14 +50,11 @@ def crazyFlightWait(common_event):
     print("Crazy Flight Process Terminated")
     processes.remove(crazyFlightProcess) # remove the process in the processes list
     threads.remove(crazyFlightThread)
-    print("crazyFlightWait returned 1")
     # flyButton.config(text="Fly",command=startCrazyFlight) # reset the button (commented because not thread-safe
     # use the code below (root.after) instead for thread safety and this should be used for all elements outside the
     # main thread like this one crazyFlightWait which is a function that will be run as a thread)
     if not common_event["shutdown"].is_set():
-        print("yep went here")
         root.after(0, lambda: flyButton.config(text="Fly", command=startCrazyFlight, state="normal")) # reset the button
-    print("crazyFlightWait returned 2")
     return
 
 def startCrazyFlight():
@@ -84,7 +69,7 @@ def startCrazyFlight():
                   common_event['cameraAbortEvent']])
 
     crazyFlightThread = Thread(target=crazyFlightWait, args=(common_event,))
-    crazyFlightProcess = Process(target=crazy_flight.crazyFlight, args=(uri, telegram_info, config, common_event,))
+    crazyFlightProcess = Process(target=crazy_flight.crazyFlight, args=(common_var, common_event,))
     crazyFlightThread.start() # start thread that polls
     crazyFlightProcess.start() # start separate process
     processes.append(crazyFlightProcess) # include the process in the processes list
@@ -125,7 +110,7 @@ def createTkinterGUI():
     flyButton.pack(pady=10)
 
     # LED blink test button
-    ledBlinkButton = tk.Button(root, text="Blink Test", command=lambda: crazy_flight.ledBlink(uri, config))
+    ledBlinkButton = tk.Button(root, text="Blink Test", command=lambda: crazy_flight.ledBlink(common_var))
     ledBlinkButton.pack(pady=10)
 
     open_config_button = tk.Button(root, text="Open Config Window", command=openConfig)
@@ -194,7 +179,7 @@ def on_closing():
             process.join()
 
     root.destroy()
-    print("root destroyed")
+    #print("root destroyed")
 
 if __name__ == "__main__":
 
@@ -219,8 +204,30 @@ if __name__ == "__main__":
     common_event['finishCrazyCamera'] = manager.Event() # event to indicate that crazyCameraProcess has finished/returned
     common_event['shutdown'] = manager.Event() # event to indicate that close button is pressed
 
-    #common_var = manager.dict()
+    common_var = manager.dict()
 
-    #common_var[]
+    common_var['uri'] = load_yaml_config('config/uri.yaml')
+    displayURIText = f"URI: {common_var['uri']['uri']}"
+    common_var['telegram_info'] = load_yaml_config('config/telegram_info.yaml')
+    common_var['config'] = load_yaml_config('config/config.yaml')
+    # Command Registering
+    # Get the directory where the current script (or .exe) is located (not used, only used for debugging and emergency)
+    """
+    if getattr(sys, 'frozen', False):
+        script_dir = os.path.dirname(sys.executable)
+    else:
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+    """
+    common_var['command'] = load_yaml_config('config/command.yaml')
+    common_var['command'] = register_inputs(f"commands/{common_var['command']['command']}.txt")
+
+    # debug print to see if data are correctly entered
+    """
+    debug_print = (f"uri: {common_var['uri']['uri']}\n"
+                   f"telegram_info: {common_var['telegram_info']["user_id"]}\n"
+                   f"config: {common_var['config']['logging_decimal_places']}\n"
+                   f"command: {common_var['command']}")
+    print(debug_print)
+    """
 
     createTkinterGUI()

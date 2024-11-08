@@ -1,8 +1,8 @@
-import os
+#import os
 import sys
+import yaml
 
-# Test Input Split 2: where only either yaw, x, or y that can have non zero value (unfinished)
-
+# r
 def register_inputs(file_path):
     # Default values for the command keys
     DEFAULT_VALUES = {
@@ -12,7 +12,7 @@ def register_inputs(file_path):
         'z': 0.0,
         'velocity': 0.2,
         'yaw': 0.0,
-        'rate': 30,
+        'rate': 72.0,
         'hold': 2.0,
         'note': ''
     }
@@ -27,7 +27,10 @@ def register_inputs(file_path):
                 # Strip whitespace and check if the line is not empty
                 stripped_line = line.strip()
                 if stripped_line:  # Proceed only if the line is not empty
-                    command_dict = DEFAULT_VALUES
+                    # .copy() method is needed in the line below, if not included, DEFAULT_VALUES will also
+                    # change because of how python works (it treats value assigning by pointing to 
+                    # memories, not creating a new copy, use deepcopy if the dictionary is more complex)
+                    command_dict = DEFAULT_VALUES.copy()
                     parts = stripped_line.split(',')
                     for part in parts:
                         key, value = part.split(':', 1)  # Split on the first colon
@@ -42,17 +45,20 @@ def register_inputs(file_path):
                         else:
                             # Non-numeric values (title, note) are just strings
                             command_dict[key] = value
+                    #print(f"command_dict after: {command_dict}")
                     commands.append(command_dict)
         
         # check if commands is empty
         if commands:
+            #print(f"Commands: {commands}")
             for command in commands:
                 total_movement_input = int(bool(command['yaw']))+int(bool(command['x']))+int(bool(command['y']))+int(bool(command['z']))
                 movement_invalid = True
                 if total_movement_input==1 or total_movement_input==0:
                     movement_invalid = False
                 if movement_invalid:
-                    raise ValueError(f"Invalid movement input: only either yaw, x, y, or z can have non-zero value, total input given is {total_movement_input} when only 0 or 1 is allowed")
+                    raise ValueError(f"Invalid movement input: only either yaw, x, y, or z can have non-zero value, total input given is {total_movement_input} when only 0 or 1 is allowed\n"
+                                     f"Check inputs, x: {command['x']}, y: {command['y']}, z: {command['z']}, yaw: {command['yaw']}")
             return commands
         else:
             # if commands is empty
@@ -60,3 +66,15 @@ def register_inputs(file_path):
 
     except FileNotFoundError:
         raise FileNotFoundError(f"File {file_path} Not found")
+    
+def load_yaml_config(file_path):
+    """Load a YAML configuration file. If loading fails, raise an exception to stop the program."""
+    try:
+        with open(file_path, 'r') as file:
+            return yaml.safe_load(file)
+    except FileNotFoundError:
+        print(f"Critical error: '{file_path}' not found. Exiting.")
+        sys.exit(1)  # Exits the program with an error code
+    except yaml.YAMLError as e:
+        print(f"Critical error parsing '{file_path}': {e}. Exiting.")
+        sys.exit(1)  # Exits the program with an error code
