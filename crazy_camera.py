@@ -25,5 +25,6 @@ def crazyCamera(common_event):
         print("Aborting Camera")
         common_event['cameraAbortEvent'].set()
     
+    common_event['finishCrazyTelegram'].set()
     common_event['finishCrazyCamera'].set()
     return

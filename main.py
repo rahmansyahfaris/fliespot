@@ -42,14 +42,28 @@ def update_uri(new_uri):
     common_var['uri']['uri'] = new_uri
     return
 
-def crazyFlightWait(common_event, common_var):
-    common_event["finishCrazyFlight"].wait()
-    if crazyFlightProcess.is_alive(): # check if the process still running
-        crazyFlightProcess.terminate() # abruptly stops the process
-        crazyFlightProcess.join() # cleaning up before continuing
-    print("Crazy Flight Process Terminated")
-    processes.remove(crazyFlightProcess) # remove the process in the processes list
-    threads.remove(crazyFlightThread)
+def crazyWait(common_event, common_var):
+    if common_var['config']['flight_enabled']:
+        common_event["finishCrazyFlight"].wait()
+        if crazyFlightProcess.is_alive(): # check if the process still running
+            crazyFlightProcess.terminate() # abruptly stops the process
+            crazyFlightProcess.join() # cleaning up before continuing
+        print("Crazy Flight Process Terminated")
+        processes.remove(crazyFlightProcess) # remove the process in the processes list
+    if common_var['camera']['camera_enabled']:
+        common_event["finishCrazyCamera"].wait()
+        if crazyCameraProcess.is_alive():
+            crazyCameraProcess.terminate()
+            crazyCameraProcess.join()
+        print("Crazy Camera Process Terminated")
+        processes.remove(crazyCameraProcess)
+    if common_var['extras']['telegram_enabled']:
+        common_event["finishCrazyTelegram"].wait()
+        if crazyTelegramProcess.is_alive():
+            crazyTelegramProcess.terminate()
+            crazyTelegramProcess.join()
+        print("Crazy Telegram Process Terminated")
+    threads.remove(crazyThread)
     # flyButton.config(text="Fly",command=startCrazyFlight) # reset the button (commented because not thread-safe
     # use the code below (root.after) instead for thread safety and this should be used for all elements outside the
     # main thread like this one crazyFlightWait which is a function that will be run as a thread)
@@ -59,7 +73,7 @@ def crazyFlightWait(common_event, common_var):
 
 def startCrazyFlight():
     # basically starting the flying mechanism, polling for flight abort
-    global processes, crazyFlightProcess, crazyFlightThread
+    global processes, threads, crazyThread, crazyFlightProcess, crazyCameraProcess, crazyTelegramProcess
 
     # it is important to clear each events before starting again,
     # if not, it will only work the first time, the next one will be error
@@ -68,19 +82,25 @@ def startCrazyFlight():
                   common_event['finishCrazyCamera'],
                   common_event['cameraAbortEvent']])
     
-    crazyFlightThread = Thread(target=crazyFlightWait, args=(common_event, common_var,))
+    crazyThread = Thread(target=crazyWait, args=(common_event, common_var,))
+    crazyThread.start() # start thread that polls
+    threads.append(crazyThread)
 
-    # Declaring Processes
-    crazyFlightProcess = Process(target=crazy_flight.crazyFlight, args=(common_var, common_event,))
-    crazyCameraProcess = Process(target=crazy_camera.crazyCamera, args=(common_event,))
-    crazyTelegramProcess = Process(target=crazy_telegram.crazyTelegram, args=(common_var,))
-    # Starting Processes and Thread
-    crazyFlightThread.start() # start thread that polls
-    crazyFlightProcess.start() # start separate process
-    crazyCameraProcess.start()
-    crazyTelegramProcess.start()
-    processes.append(crazyFlightProcess, crazyCameraProcess, crazyTelegramProcess) # include the process in the processes list
-    threads.append(crazyFlightThread)
+    # Processes Making
+    if common_var['config']['flight_enabled']:
+        crazyFlightProcess = Process(target=crazy_flight.crazyFlight, args=(common_var, common_event,))
+        crazyFlightProcess.start() # start separate process
+        processes.append(crazyFlightProcess) # include the process in the processes list
+    else:
+        common_event['finishCrazyFlight'].set()
+    if common_var['camera']['camera_enabled']:
+        crazyCameraProcess = Process(target=crazy_camera.crazyCamera, args=(common_event,))
+        crazyCameraProcess.start()
+        processes.append(crazyCameraProcess)
+    if common_var['extras']['telegram_enabled']:
+        crazyTelegramProcess = Process(target=crazy_telegram.crazyTelegram, args=(common_var,))
+        crazyTelegramProcess.start()
+        processes.append(crazyTelegramProcess)
     # change button to now function as abort/cancel
     flyButton.config(text="Stop",command=lambda: stopCrazyFlight(common_event["crazyAbortEvent"]))
     return
@@ -209,6 +229,7 @@ if __name__ == "__main__":
     crazyCameraProcess end or termination
     """
     common_event['finishCrazyCamera'] = manager.Event() # event to indicate that crazyCameraProcess has finished/returned
+    common_event['finishCrazyTelegram'] = manager.Event()
     common_event['shutdown'] = manager.Event() # event to indicate that close button is pressed
 
     common_var = manager.dict() # shared variables across processes and threads
