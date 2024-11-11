@@ -1,1 +1,2 @@
-command: "test_a1"
+command_directory: "commands/"
+command: "test_a1.txt"

@@ -10,8 +10,6 @@ from multiprocessing import Process, Event
 from threading import Thread
 import logging
 import process_functions
-import crazy_camera
-import crazy_telegram
 
 # Load the environment variables
 load_dotenv()
@@ -31,10 +29,6 @@ def ledBlink(common_var):
     return
 
 def crazyFlight(common_var, common_event):
-    crazyCameraProcess = Process(target=crazy_camera.crazyCamera, args=(common_event,))
-    crazyTelegramProcess = Process(target=crazy_telegram.crazyTelegram, args=(common_var,))
-    crazyCameraProcess.start()
-    crazyTelegramProcess.start()
 
     # this iterations and loops simulate camera activity
     iter = 20
@@ -51,17 +45,6 @@ def crazyFlight(common_var, common_event):
     if common_event["crazyAbortEvent"].is_set():
         common_event['cameraAbortEvent'].wait()
         print("Camera Aborted")
-
-    # making sure crazyCameraProcess is finished clean
-    if crazyCameraProcess.is_alive():
-        crazyCameraProcess.terminate()
-        crazyCameraProcess.join()
-        print("Crazy Camera Process Terminated")
-
-    if crazyTelegramProcess.is_alive():
-        crazyTelegramProcess.terminate()
-        crazyTelegramProcess.join()
-        print("Crazy Telegram Process Terminated")
 
     print("Crazy Flight Process Terminating")
     common_event["finishCrazyFlight"].set()

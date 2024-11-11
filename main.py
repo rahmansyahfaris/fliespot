@@ -2,10 +2,10 @@ import tkinter as tk
 import time
 from multiprocessing import Process, Queue, Event, Manager
 import threading
-import crazy_flight
+import crazy_flight, crazy_camera, crazy_telegram
 import update_env_config
 from threading import Thread
-from register_commands import register_inputs, load_yaml_config
+import register_commands
 import os
 import sys
 import yaml
@@ -42,7 +42,7 @@ def update_uri(new_uri):
     common_var['uri']['uri'] = new_uri
     return
 
-def crazyFlightWait(common_event):
+def crazyFlightWait(common_event, common_var):
     common_event["finishCrazyFlight"].wait()
     if crazyFlightProcess.is_alive(): # check if the process still running
         crazyFlightProcess.terminate() # abruptly stops the process
@@ -67,12 +67,19 @@ def startCrazyFlight():
                   common_event['crazyAbortEvent'],
                   common_event['finishCrazyCamera'],
                   common_event['cameraAbortEvent']])
+    
+    crazyFlightThread = Thread(target=crazyFlightWait, args=(common_event, common_var,))
 
-    crazyFlightThread = Thread(target=crazyFlightWait, args=(common_event,))
+    # Declaring Processes
     crazyFlightProcess = Process(target=crazy_flight.crazyFlight, args=(common_var, common_event,))
+    crazyCameraProcess = Process(target=crazy_camera.crazyCamera, args=(common_event,))
+    crazyTelegramProcess = Process(target=crazy_telegram.crazyTelegram, args=(common_var,))
+    # Starting Processes and Thread
     crazyFlightThread.start() # start thread that polls
     crazyFlightProcess.start() # start separate process
-    processes.append(crazyFlightProcess) # include the process in the processes list
+    crazyCameraProcess.start()
+    crazyTelegramProcess.start()
+    processes.append(crazyFlightProcess, crazyCameraProcess, crazyTelegramProcess) # include the process in the processes list
     threads.append(crazyFlightThread)
     # change button to now function as abort/cancel
     flyButton.config(text="Stop",command=lambda: stopCrazyFlight(common_event["crazyAbortEvent"]))
@@ -204,30 +211,32 @@ if __name__ == "__main__":
     common_event['finishCrazyCamera'] = manager.Event() # event to indicate that crazyCameraProcess has finished/returned
     common_event['shutdown'] = manager.Event() # event to indicate that close button is pressed
 
-    common_var = manager.dict()
+    common_var = manager.dict() # shared variables across processes and threads
 
-    common_var['uri'] = load_yaml_config('config/uri.yaml')
+    common_var['uri'] = register_commands.load_yaml_config('config/uri.yaml')
     displayURIText = f"URI: {common_var['uri']['uri']}"
-    common_var['telegram_info'] = load_yaml_config('config/telegram_info.yaml')
-    common_var['config'] = load_yaml_config('config/config.yaml')
-    # Command Registering
+    common_var['telegram_info'] = register_commands.load_yaml_config('config/telegram_info.yaml')
+    common_var['config'] = register_commands.load_yaml_config('config/config.yaml')
+    common_var['camera'] = register_commands.load_yaml_config('config/camera.yaml')
+    common_var['extras'] = register_commands.load_yaml_config('config/extras.yaml')
     # Get the directory where the current script (or .exe) is located (not used, only used for debugging and emergency)
+    # For Command Registering
     """
     if getattr(sys, 'frozen', False):
         script_dir = os.path.dirname(sys.executable)
     else:
         script_dir = os.path.dirname(os.path.abspath(__file__))
     """
-    common_var['command'] = load_yaml_config('config/command.yaml')
-    common_var['command'] = register_inputs(f"commands/{common_var['command']['command']}.txt")
+    # Command Registering
+    common_var['command'] = register_commands.load_yaml_config('config/command.yaml')
+    common_var['command'] = register_commands.register_inputs(f"{common_var['command']['command_directory']}{common_var['command']['command']}")
 
     # debug print to see if data are correctly entered
     """
-    debug_print = (f"uri: {common_var['uri']['uri']}\n"
-                   f"telegram_info: {common_var['telegram_info']["user_id"]}\n"
-                   f"config: {common_var['config']['logging_decimal_places']}\n"
-                   f"command: {common_var['command']}")
-    print(debug_print)
+    for config in common_var:
+        print(config)
+        print(common_var[config])
+        print("")
     """
 
     createTkinterGUI()
