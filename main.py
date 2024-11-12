@@ -102,7 +102,7 @@ def startCrazyFlight():
         crazyTelegramProcess.start()
         processes.append(crazyTelegramProcess)
     # change button to now function as abort/cancel
-    flyButton.config(text="Stop",command=lambda: stopCrazyFlight(common_event["crazyAbortEvent"]))
+    flyButton.config(text="Stop",command=lambda: stopCrazyFlight(common_event))
     return
 
 def stopCrazyFlight(event):
@@ -112,6 +112,11 @@ def stopCrazyFlight(event):
     # that contains the rest of the finishing tasks like resetting the buttons, etc
     # event is crazyAbortEvent
     return
+
+def forceStop(common_event):
+    common_event["finishCrazyFlight"].set()
+    common_event["finishCrazyCamera"].set()
+    common_event["finishCrazyTelegram"].set()
 
 def createTkinterGUI():
     global root, flyButton, displayURI, entryURI
@@ -139,6 +144,9 @@ def createTkinterGUI():
     # LED blink test button
     ledBlinkButton = tk.Button(root, text="Blink Test", command=lambda: crazy_flight.ledBlink(common_var))
     ledBlinkButton.pack(pady=10)
+
+    forceStopButton = tk.Button(root, text="Force Stop", command=lambda: forceStop(common_event))
+    forceStopButton.pack(pady=10)
 
     open_config_button = tk.Button(root, text="Open Config Window", command=openConfig)
     open_config_button.pack(pady=20)
