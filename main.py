@@ -80,7 +80,8 @@ def startCrazyFlight():
     clear_events([common_event['finishCrazyFlight'],
                   common_event['crazyAbortEvent'],
                   common_event['finishCrazyCamera'],
-                  common_event['cameraAbortEvent']])
+                  common_event['cameraAbortEvent'],
+                  common_event['finishCrazyTelegram']])
     
     crazyThread = Thread(target=crazyWait, args=(common_event, common_var,))
     crazyThread.start() # start thread that polls
@@ -105,9 +106,9 @@ def startCrazyFlight():
     flyButton.config(text="Stop",command=lambda: stopCrazyFlight(common_event))
     return
 
-def stopCrazyFlight(event):
+def stopCrazyFlight(common_event):
     flyButton.config(text="Terminating...", state="disabled") # button disabled waiting
-    event.set()
+    common_event['crazyAbortEvent'].set()
     # the event.set is to stop the crazyFlightThread (crazyFlightPolling function)
     # that contains the rest of the finishing tasks like resetting the buttons, etc
     # event is crazyAbortEvent

@@ -52,6 +52,10 @@ def crazyCamera(common_event):
     classes = ['a', 'phone', 'b']
 
     while(1):
+
+        if common_event['crazyAbortEvent'].is_set():
+            break
+
         # First get the info
         packetInfoRaw = rx_bytes(4)
         #print(packetInfoRaw)
@@ -131,6 +135,23 @@ def crazyCamera(common_event):
 
                 cv2.imshow('Raw', bayer_img)
                 cv2.imshow('Color', color_img)
+
+                if boxes:
+                    # Save images if a "phone" is detected
+                    if label == "phone":
+                        print(f"Found class {label} with confidence {conf:.2f}")
+                        """
+                        # Save the raw Bayer image
+                        if not os.path.exists("stream_out/raw"):
+                            os.makedirs("stream_out/raw")
+                        cv2.imwrite(f"stream_out/raw/img_{count:06d}.png", bayer_img)
+                        
+                        # Save the color image with detection
+                        if not os.path.exists("stream_out/debayer"):
+                            os.makedirs("stream_out/debayer")
+                        cv2.imwrite(f"stream_out/debayer/img_{count:06d}.png", color_img)
+                        """
+
                 """
                 if args.save:
                     cv2.imwrite(f"stream_out/raw/img_{count:06d}.png", bayer_img)
