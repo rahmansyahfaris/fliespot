@@ -1,4 +1,4 @@
-camera_enabled: true
+camera_enabled: false
 model: "phone_yolov5s_batch_2_epochs_10_best.onnx"
 model_directory: "model/"
 model_classes: "phone_yolov5s_batch_2_epochs_10_best_classes.txt"

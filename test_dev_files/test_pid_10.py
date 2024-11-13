@@ -8,7 +8,7 @@ from cflib.utils import uri_helper
 from cflib.positioning.motion_commander import MotionCommander
 from cflib.crazyflie.log import LogConfig
 
-# Test PID 10 (UNFINISHED):
+# Test PID 10:
 # - rotations with the mathematical formulas now to allow all kinds of angles
 
 # URI to the Crazyflie to connect to

@@ -1,0 +1,3 @@
+title: Rotation 45 degrees, yaw:45
+title:forward,x:1
+title:backward,x:-1
