@@ -9,7 +9,7 @@ import logging
 from multiprocessing import Queue, Process, Event
 from threading import Thread
 
-def crazyCamera(common_event):
+def crazyCamera(common_event, common_var):
 
     # Args for setting IP/port of AI-deck. Default settings are for when
     # AI-deck is in AP mode.
@@ -48,10 +48,19 @@ def crazyCamera(common_event):
     start = time.time()
     count = 0
 
-    net = cv2.dnn.readNetFromONNX('./model/phone_yolov5s_batch_2_epochs_10_best.onnx')
-    classes = ['a', 'phone', 'b']
+    try:
+        net = cv2.dnn.readNetFromONNX(f'./{common_var['camera']['model_directory']}{common_var['camera']['model']}')
+        classes = []
+        with open(f'{common_var['camera']['classes_directory']}{common_var['camera']['classes']}', 'r') as file:
+            # Read lines and strip newline characters
+            classes = [line.strip() for line in file]
+    except Exception as err:
+        print(f"Crazy Camera Process Terminating due to {err}")
+        common_event['finishCrazyTelegram'].set()
+        common_event['finishCrazyCamera'].set()
+        return
 
-    while(1):
+    while True:
 
         if common_event['crazyAbortEvent'].is_set():
             break

@@ -96,7 +96,7 @@ def startCrazyFlight():
     else:
         common_event['finishCrazyFlight'].set()
     if common_var['camera']['camera_enabled']:
-        crazyCameraProcess = Process(target=crazy_camera.crazyCamera, args=(common_event,))
+        crazyCameraProcess = Process(target=crazy_camera.crazyCamera, args=(common_event, common_var))
         crazyCameraProcess.start()
         processes.append(crazyCameraProcess)
     if common_var['extras']['telegram_enabled']:
