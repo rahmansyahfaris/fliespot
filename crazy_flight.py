@@ -37,7 +37,13 @@ def crazyFlight(common_var, common_event):
     #cflib.crtp.init_drivers()
 
     # Initialize the low-level drivers (don't list the debug drivers)
-    cflib.crtp.init_drivers(enable_debug_driver=False)
+    try:
+        cflib.crtp.init_drivers(enable_debug_driver=False)
+    except Exception as err:
+        print(f"Crazy Flight Process Terminating due to {err}")
+        common_event["finishCrazyFlight"].set()
+        return
+
 
     # PID controller constants
     Kp_y = 0.1
@@ -120,162 +126,180 @@ def crazyFlight(common_var, common_event):
         # time and date stuff
         current_datetime = datetime.now()
         elapsed_time = time.perf_counter() - start_time
-        print(f"[{current_datetime.strftime('%Y-%m-%d %H:%M:%S.%f')}] ET: {elapsed_time * 1000:.3f} ms | x_cur: {round(pos_current_x,2)} | y_cur: {round(pos_current_y,2)} | x_log: {round(pos_logging_x,2)} | y_log: {round(pos_logging_y,2)} | z_log: {round(pos_logging_z,2)} | yaw: {round(yaw_logging,2)}")
+        # logging print
+        """
+        print(f"[{current_datetime.strftime('%Y-%m-%d %H:%M:%S.%f')}] ET: {elapsed_time * 1000:.3f} ms "
+              f"| x_cur: {round(pos_current_x,2)} | y_cur: {round(pos_current_y,2)} "
+              f"| x_log: {round(pos_logging_x,2)} | y_log: {round(pos_logging_y,2)} "
+              f"| z_log: {round(pos_logging_z,2)} | yaw: {round(yaw_logging,2)}")
+        """
+        print(f"{current_datetime.strftime('%Y,%m,%d,%H,%M,%S.%f')},{elapsed_time * 1000:.3f},"
+              f"{round(pos_current_x,2)},{round(pos_current_y,2)},"
+              f"{round(pos_logging_x,2)},{round(pos_logging_y,2)},"
+              f"{round(pos_logging_z,2)},{round(yaw_logging,2)}")
         #print(f"t: {timestamp} | x_cur: {round(pos_current_x,2)} | y_cur: {round(pos_current_y,2)} | x_log: {round(pos_logging_x,2)} | y_log: {round(pos_logging_y,2)} ")
 
     # Connect to the Crazyflie and run the sequence
-    with SyncCrazyflie(uri, cf=Crazyflie(rw_cache='./cache')) as scf:
-        # Set up logging
-        log_conf = LogConfig(name='Position', period_in_ms=100)
-        log_conf.add_variable('stateEstimate.x', 'float')
-        log_conf.add_variable('stateEstimate.y', 'float')
-        log_conf.add_variable('stateEstimate.z', 'float')
-        log_conf.add_variable('stateEstimate.yaw', 'float')
-        
-        scf.cf.log.add_config(log_conf)
-        log_conf.data_received_cb.add_callback(log_pos_callback)
-        print("FLIGHT STATUS: Starting log")
-        log_conf.start()
+    try:
+        with SyncCrazyflie(uri, cf=Crazyflie(rw_cache='./cache')) as scf:
+            # Set up logging
+            log_conf = LogConfig(name='Position', period_in_ms=100)
+            log_conf.add_variable('stateEstimate.x', 'float')
+            log_conf.add_variable('stateEstimate.y', 'float')
+            log_conf.add_variable('stateEstimate.z', 'float')
+            log_conf.add_variable('stateEstimate.yaw', 'float')
+            
+            scf.cf.log.add_config(log_conf)
+            log_conf.data_received_cb.add_callback(log_pos_callback)
+            print("FLIGHT STATUS: Starting log")
+            log_conf.start()
 
-        print("FLIGHT STATUS: Taking off")
-        with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
-            print("FLIGHT STATUS: Little pause before starting")
-            pos_desired_x = 0.0
-            pos_desired_y = 0.0
-            pid_x = PID(Kp_x, Ki_x, Kd_x, setpoint=pos_desired_x)
-            pid_y = PID(Kp_y, Ki_y, Kd_y, setpoint=pos_desired_y)
-            initial_timeout = 5 # in seconds
-            initial_start_time = time.time()
-            while True:
-                initial_elapsed_time = time.time() - initial_start_time
-                if initial_elapsed_time > initial_timeout:
-                    print("FLIGHT STATUS: Initial pause completed")
-                    break
-                control_velocity_x = pid_x.compute(pos_current_x)
-                control_velocity_y = pid_y.compute(pos_current_y)
-                mc.start_linear_motion(control_velocity_x, control_velocity_y, 0)
-                time.sleep(0.1) # little delay to not overwhelm the drone
-            mc.start_linear_motion(0, 0, 0) # stay still
-            #time.sleep(2)
+            print("FLIGHT STATUS: Taking off")
+            with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
+                print("FLIGHT STATUS: Little pause before starting")
+                pos_desired_x = 0.0
+                pos_desired_y = 0.0
+                pid_x = PID(Kp_x, Ki_x, Kd_x, setpoint=pos_desired_x)
+                pid_y = PID(Kp_y, Ki_y, Kd_y, setpoint=pos_desired_y)
+                initial_timeout = 5 # in seconds
+                initial_start_time = time.time()
+                while True:
+                    initial_elapsed_time = time.time() - initial_start_time
+                    if common_event['crazyAbortEvent'].is_set():
+                        print("FLIGHT STATUS: Aborting Flight")
+                        break
+                    if initial_elapsed_time > initial_timeout:
+                        print("FLIGHT STATUS: Initial pause completed")
+                        break
+                    control_velocity_x = pid_x.compute(pos_current_x)
+                    control_velocity_y = pid_y.compute(pos_current_y)
+                    mc.start_linear_motion(control_velocity_x, control_velocity_y, 0)
+                    time.sleep(0.1) # little delay to not overwhelm the drone
+                mc.start_linear_motion(0, 0, 0) # stay still
+                #time.sleep(2)
 
-            print("FLIGHT STATUS: Starting commanded movement")
+                print("FLIGHT STATUS: Starting commanded movement")
 
-            for index, command in enumerate(common_var['command']):
-                print(f"Command {index+1}: {command['title']}")
-                if command['x'] != 0:
-                    isEnteringNewMovement = True
-                    negate = 1 if command['x'] >= 0 else -1
-                    yet_reached = (lambda a, b: a < b) if negate==1 else (lambda a, b: a > b)
-                    pos_desired_x = command['x']
-                    pos_desired_y = 0.0
-                    pid_y = PID(Kp_y, Ki_y, Kd_y, setpoint=pos_desired_y)
-                    #print("DEBUG FLIGHT: X, {command['x']} meter, ")
-                    while yet_reached(pos_current_x, pos_desired_x):
-                        if common_event['crazyAbortEvent'].is_set():
-                            print("FLIGHT STATUS: Aborting Flight")
-                            break
-                        # Calculate control signal for y-axis
-                        control_velocity_y = pid_y.compute(pos_current_y)
-                        # Apply control signals
-                        mc.start_linear_motion(negate*command['velocity'], control_velocity_y, 0)
-                        # Adding little delay to not overwhelm the drone
-                        time.sleep(0.1)
-                    print(f"FLIGHT STATUS: Pause before next movement ({command['hold']} seconds)")
-                    mc.start_linear_motion(0, 0, 0) # stay still
-                    isEnteringNewMovement = True
-                    pos_desired_x = 0.0
-                    pos_desired_y = 0.0
-                    pid_x = PID(Kp_x, Ki_x, Kd_x, setpoint=pos_desired_x)
-                    pid_y = PID(Kp_y, Ki_y, Kd_y, setpoint=pos_desired_y)
-                    hold_duration = command['hold']
-                    hold_time_start = time.time()
-                    while True:
-                        hold_time_elapsed = time.time() - hold_time_start
-                        if hold_time_elapsed > hold_duration:
-                            break
-                        if common_event['crazyAbortEvent'].is_set():
-                            print("FLIGHT STATUS: Aborting Flight")
-                            break
-                        control_velocity_x = pid_x.compute(pos_current_x)
-                        control_velocity_y = pid_y.compute(pos_current_y)
-                        mc.start_linear_motion(control_velocity_x, control_velocity_y, 0)
-                        time.sleep(0.1) # little delay to not overwhelm the drone
-                    mc.start_linear_motion(0, 0, 0) # stay still
-                    #time.sleep(2) # pause before next movement
-                elif command['y'] != 0:
-                    isEnteringNewMovement = True
-                    negate = 1 if command['y'] >= 0 else -1
-                    yet_reached = (lambda a, b: a < b) if negate==1 else (lambda a, b: a > b)
-                    pos_desired_x = 0.0
-                    pos_desired_y = command['y']
-                    pid_x = PID(Kp_x, Ki_x, Kd_x, setpoint=pos_desired_x)
-                    while yet_reached(pos_current_y, pos_desired_y):
-                        if common_event['crazyAbortEvent'].is_set():
-                            print("FLIGHT STATUS: Aborting Flight")
-                            break
-                        # Calculate control signal for y-axis
-                        control_velocity_x = pid_x.compute(pos_current_x)
-                        # Apply control signals
-                        mc.start_linear_motion(control_velocity_x, negate*command['velocity'], 0)
-                        # Adding little delay to not overwhelm the drone
-                        time.sleep(0.1)
-                    print(f"FLIGHT STATUS: Pause before next movement ({command['hold']} seconds)")
-                    mc.start_linear_motion(0, 0, 0) # stay still
-                    isEnteringNewMovement = True
-                    pos_desired_x = 0.0
-                    pos_desired_y = 0.0
-                    pid_x = PID(Kp_x, Ki_x, Kd_x, setpoint=pos_desired_x)
-                    pid_y = PID(Kp_y, Ki_y, Kd_y, setpoint=pos_desired_y)
-                    hold_duration = command['hold']
-                    hold_time_start = time.time()
-                    while True:
-                        hold_time_elapsed = time.time() - hold_time_start
-                        if hold_time_elapsed > hold_duration:
-                            break
-                        if common_event['crazyAbortEvent'].is_set():
-                            print("FLIGHT STATUS: Aborting Flight")
-                            break
-                        control_velocity_x = pid_x.compute(pos_current_x)
-                        control_velocity_y = pid_y.compute(pos_current_y)
-                        mc.start_linear_motion(control_velocity_x, control_velocity_y, 0)
-                        time.sleep(0.1) # little delay to not overwhelm the drone
-                    mc.start_linear_motion(0, 0, 0) # stay still
-                    #time.sleep(2) # pause before next movement
-                elif command['yaw'] != 0:
-                    isEnteringNewMovement = True
-                    mc.turn_left(command['yaw'])
-                    yawDegreeChange += command['yaw'] # yaw degree change (remember don't use equal, use increment)
-                    print(f"FLIGHT STATUS: Pause before next movement ({command['hold']} seconds)")
-                    mc.start_linear_motion(0, 0, 0) # stay still
-                    #isEnteringNewMovement = True
-                    pos_desired_x = 0.0
-                    pos_desired_y = 0.0
-                    pid_x = PID(Kp_x, Ki_x, Kd_x, setpoint=pos_desired_x)
-                    pid_y = PID(Kp_y, Ki_y, Kd_y, setpoint=pos_desired_y)
-                    hold_duration = command['hold']
-                    hold_time_start = time.time()
-                    while True:
-                        hold_time_elapsed = time.time() - hold_time_start
-                        if hold_time_elapsed > hold_duration:
-                            break
-                        if common_event['crazyAbortEvent'].is_set():
-                            print("FLIGHT STATUS: Aborting Flight")
-                            break
-                        control_velocity_x = pid_x.compute(pos_current_x)
-                        control_velocity_y = pid_y.compute(pos_current_y)
-                        mc.start_linear_motion(control_velocity_x, control_velocity_y, 0)
-                        time.sleep(0.1) # little delay to not overwhelm the drone
-                    mc.start_linear_motion(0, 0, 0) # stay still
-                    #time.sleep(2) # pause before next movement
-                if common_event['crazyAbortEvent'].is_set():
-                    print("FLIGHT STATUS: Aborting Flight")
-                    break
+                for index, command in enumerate(common_var['command']):
+                    print(f"Command {index+1}: {command['title']}")
+                    if command['x'] != 0:
+                        isEnteringNewMovement = True
+                        negate = 1 if command['x'] >= 0 else -1
+                        yet_reached = (lambda a, b: a < b) if negate==1 else (lambda a, b: a > b)
+                        pos_desired_x = command['x']
+                        pos_desired_y = 0.0
+                        pid_y = PID(Kp_y, Ki_y, Kd_y, setpoint=pos_desired_y)
+                        #print("DEBUG FLIGHT: X, {command['x']} meter, ")
+                        while yet_reached(pos_current_x, pos_desired_x):
+                            if common_event['crazyAbortEvent'].is_set():
+                                print("FLIGHT STATUS: Aborting Flight")
+                                break
+                            # Calculate control signal for y-axis
+                            control_velocity_y = pid_y.compute(pos_current_y)
+                            # Apply control signals
+                            mc.start_linear_motion(negate*command['velocity'], control_velocity_y, 0)
+                            # Adding little delay to not overwhelm the drone
+                            time.sleep(0.1)
+                        print(f"FLIGHT STATUS: Pause before next movement ({command['hold']} seconds)")
+                        mc.start_linear_motion(0, 0, 0) # stay still
+                        #isEnteringNewMovement = True
+                        #pos_desired_x = 0.0
+                        #pos_desired_y = 0.0
+                        pid_x = PID(Kp_x, Ki_x, Kd_x, setpoint=pos_desired_x)
+                        pid_y = PID(Kp_y, Ki_y, Kd_y, setpoint=pos_desired_y)
+                        hold_duration = command['hold']
+                        hold_time_start = time.time()
+                        while True:
+                            hold_time_elapsed = time.time() - hold_time_start
+                            if hold_time_elapsed > hold_duration:
+                                break
+                            if common_event['crazyAbortEvent'].is_set():
+                                print("FLIGHT STATUS: Aborting Flight")
+                                break
+                            control_velocity_x = pid_x.compute(pos_current_x)
+                            control_velocity_y = pid_y.compute(pos_current_y)
+                            mc.start_linear_motion(control_velocity_x, control_velocity_y, 0)
+                            time.sleep(0.1) # little delay to not overwhelm the drone
+                        mc.start_linear_motion(0, 0, 0) # stay still
+                        #time.sleep(2) # pause before next movement
+                    elif command['y'] != 0:
+                        isEnteringNewMovement = True
+                        negate = 1 if command['y'] >= 0 else -1
+                        yet_reached = (lambda a, b: a < b) if negate==1 else (lambda a, b: a > b)
+                        pos_desired_x = 0.0
+                        pos_desired_y = command['y']
+                        pid_x = PID(Kp_x, Ki_x, Kd_x, setpoint=pos_desired_x)
+                        while yet_reached(pos_current_y, pos_desired_y):
+                            if common_event['crazyAbortEvent'].is_set():
+                                print("FLIGHT STATUS: Aborting Flight")
+                                break
+                            # Calculate control signal for y-axis
+                            control_velocity_x = pid_x.compute(pos_current_x)
+                            # Apply control signals
+                            mc.start_linear_motion(control_velocity_x, negate*command['velocity'], 0)
+                            # Adding little delay to not overwhelm the drone
+                            time.sleep(0.1)
+                        print(f"FLIGHT STATUS: Pause before next movement ({command['hold']} seconds)")
+                        mc.start_linear_motion(0, 0, 0) # stay still
+                        #isEnteringNewMovement = True
+                        #pos_desired_x = 0.0
+                        #pos_desired_y = 0.0
+                        pid_x = PID(Kp_x, Ki_x, Kd_x, setpoint=pos_desired_x)
+                        pid_y = PID(Kp_y, Ki_y, Kd_y, setpoint=pos_desired_y)
+                        hold_duration = command['hold']
+                        hold_time_start = time.time()
+                        while True:
+                            hold_time_elapsed = time.time() - hold_time_start
+                            if hold_time_elapsed > hold_duration:
+                                break
+                            if common_event['crazyAbortEvent'].is_set():
+                                print("FLIGHT STATUS: Aborting Flight")
+                                break
+                            control_velocity_x = pid_x.compute(pos_current_x)
+                            control_velocity_y = pid_y.compute(pos_current_y)
+                            mc.start_linear_motion(control_velocity_x, control_velocity_y, 0)
+                            time.sleep(0.1) # little delay to not overwhelm the drone
+                        mc.start_linear_motion(0, 0, 0) # stay still
+                        #time.sleep(2) # pause before next movement
+                    elif command['yaw'] != 0:
+                        isEnteringNewMovement = True
+                        mc.turn_left(command['yaw'])
+                        yawDegreeChange += command['yaw'] # yaw degree change (remember don't use equal, use increment)
+                        print(f"FLIGHT STATUS: Pause before next movement ({command['hold']} seconds)")
+                        mc.start_linear_motion(0, 0, 0) # stay still
+                        #isEnteringNewMovement = True
+                        pos_desired_x = 0.0
+                        pos_desired_y = 0.0
+                        pid_x = PID(Kp_x, Ki_x, Kd_x, setpoint=pos_desired_x)
+                        pid_y = PID(Kp_y, Ki_y, Kd_y, setpoint=pos_desired_y)
+                        hold_duration = command['hold']
+                        hold_time_start = time.time()
+                        while True:
+                            hold_time_elapsed = time.time() - hold_time_start
+                            if hold_time_elapsed > hold_duration:
+                                break
+                            if common_event['crazyAbortEvent'].is_set():
+                                print("FLIGHT STATUS: Aborting Flight")
+                                break
+                            control_velocity_x = pid_x.compute(pos_current_x)
+                            control_velocity_y = pid_y.compute(pos_current_y)
+                            mc.start_linear_motion(control_velocity_x, control_velocity_y, 0)
+                            time.sleep(0.1) # little delay to not overwhelm the drone
+                        mc.start_linear_motion(0, 0, 0) # stay still
+                        #time.sleep(2) # pause before next movement
+                    if common_event['crazyAbortEvent'].is_set():
+                        print("FLIGHT STATUS: Aborting Flight")
+                        break
 
-            mc.stop()
-            print("STATUS: Target reached, landing")
-        
-        log_conf.stop()
-        print("STATUS: Finished")
+                mc.stop()
+                print("STATUS: Target reached, landing")
+            
+            log_conf.stop()
+            print("STATUS: Finished")
+    except Exception as err:
+        print(f"Crazy Flight Process Terminating due to {err}")
+        common_event["finishCrazyFlight"].set()
+        return
 
     if common_event["crazyAbortEvent"].is_set():
         #common_event['cameraAbortEvent'].wait()

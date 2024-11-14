@@ -28,7 +28,7 @@ def crazyCamera(common_event):
         client_socket.settimeout(3)
         client_socket.connect((deck_ip, deck_port))
         print("Socket connected")
-    except(socket.error, socket.timeout) as err:
+    except (socket.error, socket.timeout) as err:
         print(f"Failed to connect to socket: {err}")
         common_event['finishCrazyTelegram'].set()
         common_event['finishCrazyCamera'].set()
