@@ -3,6 +3,7 @@ import time
 from multiprocessing import Process, Queue, Event, Manager
 import threading
 import crazy_flight, crazy_camera, crazy_telegram
+import test_dev_files.test_different_controls.crazy_flight_a
 import update_env_config
 from threading import Thread
 import register_commands
