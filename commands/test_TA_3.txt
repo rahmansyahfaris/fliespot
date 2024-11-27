@@ -1,0 +1,4 @@
+x:1,title:Square strafe
+y:1
+x:-1
+y:-1,hold:5

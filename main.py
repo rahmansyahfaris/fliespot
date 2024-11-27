@@ -3,7 +3,7 @@ import time
 from multiprocessing import Process, Queue, Event, Manager
 import threading
 import crazy_flight, crazy_camera, crazy_telegram
-import test_dev_files.test_different_controls.crazy_flight_a
+from test_dev_files.crazy_flight_variations import crazy_flight_a, crazy_flight_b, crazy_flight_c # for control testing purposes
 import update_env_config
 from threading import Thread
 import register_commands
@@ -260,7 +260,8 @@ if __name__ == "__main__":
     """
     # Command Registering
     common_var['command'] = register_commands.load_yaml_config('config/command.yaml')
-    common_var['command'] = register_commands.register_inputs(f"{common_var['command']['command_directory']}{common_var['command']['command']}")
+    common_var['command'] = register_commands.register_inputs(f"{common_var['command']['command_directory']}{common_var['command']['command']}",
+                                                              common_var)
 
     # debug print to see if data are correctly entered
     """

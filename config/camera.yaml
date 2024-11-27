@@ -1,8 +1,8 @@
-camera_enabled: false
+camera_enabled: true
 model: "phone_yolov5s_batch_2_epochs_10_best.onnx"
 model_directory: "model/"
-model_classes: "phone_yolov5s_batch_2_epochs_10_best_classes.txt"
-model_classes_directory: "model/"
+classes: "phone_yolov5s_batch_2_epochs_10_best_classes.txt"
+classes_directory: "model/"
 detection_classes: "phone"
 flight_on_found: "pause"
 flight_pause_duration: 3

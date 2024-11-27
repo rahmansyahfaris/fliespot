@@ -1,0 +1,7 @@
+x:1,title:Square turn right test
+yaw:90
+x:1
+yaw:90
+x:1
+yaw:90
+x:1,hold:5

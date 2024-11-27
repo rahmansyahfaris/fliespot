@@ -44,16 +44,6 @@ def crazyFlight(common_var, common_event):
         common_event["finishCrazyFlight"].set()
         return
 
-
-    # PID controller constants
-    Kp_y = 0.1
-    Ki_y = 0.05
-    Kd_y = 0.01
-    # PID controller constants
-    Kp_x = 0.1
-    Ki_x = 0.05
-    Kd_x = 0.01
-
     # Desired positions relative to the drone
     pos_desired_x = 0.0
     pos_desired_y = 0.0
@@ -70,23 +60,6 @@ def crazyFlight(common_var, common_event):
     cs_log_file_path = f"{common_var['config']['logs_directory']}log_cs_{datetime.now().strftime('%Y_%m_%d_%H_%M_%S')}.txt"
     cs_log_file = open(cs_log_file_path, "w")
 
-    # PID controller class
-    class PID:
-        def __init__(self, Kp, Ki, Kd, setpoint=0):
-            self.Kp = Kp
-            self.Ki = Ki
-            self.Kd = Kd
-            self.setpoint = setpoint
-            self.previous_error = 0
-            self.integral = 0
-
-        def compute(self, current_value):
-            error = self.setpoint - current_value
-            self.integral += error
-            derivative = error - self.previous_error
-            output = self.Kp * error + self.Ki * self.integral + self.Kd * derivative
-            self.previous_error = error
-            return output
 
     # function to help transform global logging points to relative points (relative to the drone each movement)
     def cf_relative(xlog, ylog, xche, yche, degree):
@@ -172,8 +145,6 @@ def crazyFlight(common_var, common_event):
                 print("FLIGHT STATUS: Little pause before starting")
                 pos_desired_x = 0.0
                 pos_desired_y = 0.0
-                pid_x = PID(Kp_x, Ki_x, Kd_x, setpoint=pos_desired_x)
-                pid_y = PID(Kp_y, Ki_y, Kd_y, setpoint=pos_desired_y)
                 initial_timeout = 5 # in seconds
                 initial_start_time = time.time()
                 while True:
@@ -184,9 +155,7 @@ def crazyFlight(common_var, common_event):
                     if initial_elapsed_time > initial_timeout:
                         print("FLIGHT STATUS: Initial pause completed")
                         break
-                    control_velocity_x = pid_x.compute(pos_current_x)
-                    control_velocity_y = pid_y.compute(pos_current_y)
-                    mc.start_linear_motion(control_velocity_x, control_velocity_y, 0)
+                    mc.start_linear_motion(0, 0, 0)
                     time.sleep(0.1) # little delay to not overwhelm the drone
                 mc.start_linear_motion(0, 0, 0) # stay still
                 #time.sleep(2)
@@ -201,16 +170,13 @@ def crazyFlight(common_var, common_event):
                         yet_reached = (lambda a, b: a < b) if negate==1 else (lambda a, b: a > b)
                         pos_desired_x = command['x']
                         pos_desired_y = 0.0
-                        pid_y = PID(Kp_y, Ki_y, Kd_y, setpoint=pos_desired_y)
                         #print("DEBUG FLIGHT: X, {command['x']} meter, ")
                         while yet_reached(pos_current_x, pos_desired_x):
                             if common_event['crazyAbortEvent'].is_set():
                                 print("FLIGHT STATUS: Aborting Flight")
                                 break
-                            # Calculate control signal for y-axis
-                            control_velocity_y = pid_y.compute(pos_current_y)
                             # Apply control signals
-                            mc.start_linear_motion(negate*command['velocity'], control_velocity_y, 0)
+                            mc.start_linear_motion(negate*command['velocity'], 0, 0)
                             # Adding little delay to not overwhelm the drone
                             time.sleep(0.1)
                         print(f"FLIGHT STATUS: Pause before next movement ({command['hold']} seconds)")
@@ -218,8 +184,6 @@ def crazyFlight(common_var, common_event):
                         isEnteringNewMovement = True
                         pos_desired_x = 0.0
                         pos_desired_y = 0.0
-                        pid_x = PID(Kp_x, Ki_x, Kd_x, setpoint=pos_desired_x)
-                        pid_y = PID(Kp_y, Ki_y, Kd_y, setpoint=pos_desired_y)
                         hold_duration = command['hold']
                         hold_time_start = time.time()
                         while True:
@@ -229,9 +193,7 @@ def crazyFlight(common_var, common_event):
                             if common_event['crazyAbortEvent'].is_set():
                                 print("FLIGHT STATUS: Aborting Flight")
                                 break
-                            control_velocity_x = pid_x.compute(pos_current_x)
-                            control_velocity_y = pid_y.compute(pos_current_y)
-                            mc.start_linear_motion(control_velocity_x, control_velocity_y, 0)
+                            mc.start_linear_motion(0, 0, 0)
                             time.sleep(0.1) # little delay to not overwhelm the drone
                         mc.start_linear_motion(0, 0, 0) # stay still
                         #time.sleep(2) # pause before next movement
@@ -241,15 +203,12 @@ def crazyFlight(common_var, common_event):
                         yet_reached = (lambda a, b: a < b) if negate==1 else (lambda a, b: a > b)
                         pos_desired_x = 0.0
                         pos_desired_y = command['y']
-                        pid_x = PID(Kp_x, Ki_x, Kd_x, setpoint=pos_desired_x)
                         while yet_reached(pos_current_y, pos_desired_y):
                             if common_event['crazyAbortEvent'].is_set():
                                 print("FLIGHT STATUS: Aborting Flight")
                                 break
-                            # Calculate control signal for y-axis
-                            control_velocity_x = pid_x.compute(pos_current_x)
                             # Apply control signals
-                            mc.start_linear_motion(control_velocity_x, negate*command['velocity'], 0)
+                            mc.start_linear_motion(0, negate*command['velocity'], 0)
                             # Adding little delay to not overwhelm the drone
                             time.sleep(0.1)
                         print(f"FLIGHT STATUS: Pause before next movement ({command['hold']} seconds)")
@@ -257,8 +216,6 @@ def crazyFlight(common_var, common_event):
                         isEnteringNewMovement = True
                         pos_desired_x = 0.0
                         pos_desired_y = 0.0
-                        pid_x = PID(Kp_x, Ki_x, Kd_x, setpoint=pos_desired_x)
-                        pid_y = PID(Kp_y, Ki_y, Kd_y, setpoint=pos_desired_y)
                         hold_duration = command['hold']
                         hold_time_start = time.time()
                         while True:
@@ -268,9 +225,7 @@ def crazyFlight(common_var, common_event):
                             if common_event['crazyAbortEvent'].is_set():
                                 print("FLIGHT STATUS: Aborting Flight")
                                 break
-                            control_velocity_x = pid_x.compute(pos_current_x)
-                            control_velocity_y = pid_y.compute(pos_current_y)
-                            mc.start_linear_motion(control_velocity_x, control_velocity_y, 0)
+                            mc.start_linear_motion(0, 0, 0)
                             time.sleep(0.1) # little delay to not overwhelm the drone
                         mc.start_linear_motion(0, 0, 0) # stay still
                         #time.sleep(2) # pause before next movement
@@ -289,8 +244,6 @@ def crazyFlight(common_var, common_event):
                         #isEnteringNewMovement = True
                         pos_desired_x = 0.0
                         pos_desired_y = 0.0
-                        pid_x = PID(Kp_x, Ki_x, Kd_x, setpoint=pos_desired_x)
-                        pid_y = PID(Kp_y, Ki_y, Kd_y, setpoint=pos_desired_y)
                         hold_duration = command['hold']
                         hold_time_start = time.time()
                         while True:
@@ -300,9 +253,7 @@ def crazyFlight(common_var, common_event):
                             if common_event['crazyAbortEvent'].is_set():
                                 print("FLIGHT STATUS: Aborting Flight")
                                 break
-                            control_velocity_x = pid_x.compute(pos_current_x)
-                            control_velocity_y = pid_y.compute(pos_current_y)
-                            mc.start_linear_motion(control_velocity_x, control_velocity_y, 0)
+                            mc.start_linear_motion(0, 0, 0)
                             time.sleep(0.1) # little delay to not overwhelm the drone
                         mc.start_linear_motion(0, 0, 0) # stay still
                         #time.sleep(2) # pause before next movement
@@ -313,8 +264,6 @@ def crazyFlight(common_var, common_event):
                         #isEnteringNewMovement = True
                         pos_desired_x = 0.0
                         pos_desired_y = 0.0
-                        pid_x = PID(Kp_x, Ki_x, Kd_x, setpoint=pos_desired_x)
-                        pid_y = PID(Kp_y, Ki_y, Kd_y, setpoint=pos_desired_y)
                         hold_duration = command['hold']
                         hold_time_start = time.time()
                         while True:
@@ -324,9 +273,7 @@ def crazyFlight(common_var, common_event):
                             if common_event['crazyAbortEvent'].is_set():
                                 print("FLIGHT STATUS: Aborting Flight")
                                 break
-                            control_velocity_x = pid_x.compute(pos_current_x)
-                            control_velocity_y = pid_y.compute(pos_current_y)
-                            mc.start_linear_motion(control_velocity_x, control_velocity_y, 0)
+                            mc.start_linear_motion(0, 0, 0)
                             time.sleep(0.1) # little delay to not overwhelm the drone
                         mc.start_linear_motion(0, 0, 0) # stay still
                         #time.sleep(2) # pause before next movement

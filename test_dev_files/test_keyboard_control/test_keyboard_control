@@ -1,0 +1,33 @@
+import pygame  # Import the pygame library
+
+# Initialize all pygame modules
+pygame.init()
+
+# Create a window of size 400x300
+screen = pygame.display.set_mode((400, 300))
+
+# Set the title of the window
+pygame.display.set_caption("Basic Pygame Window")
+
+# Set up a running flag
+running = True
+
+# Main loop
+while running:
+    # Event handling loop
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:  # If the user clicks the close button
+            running = False  # Exit the main loop
+        elif event.type == pygame.KEYDOWN:  # Detect when a key is pressed
+            print(f"Key pressed: {pygame.key.name(event.key)}")
+        elif event.type == pygame.KEYUP:  # Detect when a key is released
+            print(f"Key released: {pygame.key.name(event.key)}")
+
+    # Fill the window with a color (RGB: Red, Green, Blue)
+    screen.fill((0, 0, 255))  # Blue background
+
+    # Update the display to show the changes
+    pygame.display.flip()
+
+# Quit pygame
+pygame.quit()

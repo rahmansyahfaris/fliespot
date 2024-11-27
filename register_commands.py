@@ -3,17 +3,17 @@ import sys
 import yaml
 
 # r
-def register_inputs(file_path):
+def register_inputs(file_path, common_var):
     # Default values for the command keys
     DEFAULT_VALUES = {
         'title': '',
         'x': 0.0,
         'y': 0.0,
         'z': 0.0,
-        'velocity': 0.2,
+        'velocity': common_var['config']['default_velocity'],
         'yaw': 0.0,
-        'rate': 72.0,
-        'hold': 2.0,
+        'rate': common_var['config']['default_yaw_rate'],
+        'hold': common_var['config']['default_hold_time'],
         'note': ''
     }
 

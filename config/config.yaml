@@ -1,7 +1,8 @@
-flight_enabled: true
+flight_enabled: false
 default_height: 1
 default_velocity: 0.2
-default_hold_time: 1
+default_hold_time: 2
 default_yaw_rate: 72.0
 logging_decimal_places: 2
 led_blink_duration: 2
+logs_directory: "logs/"

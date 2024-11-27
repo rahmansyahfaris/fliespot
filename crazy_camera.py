@@ -147,7 +147,7 @@ def crazyCamera(common_event, common_var):
 
                 if boxes:
                     # Save images if a "phone" is detected
-                    if label == "phone":
+                    if label == common_var['camera']['detection_classes']:
                         print(f"Found class {label} with confidence {conf:.2f}")
                         """
                         # Save the raw Bayer image
