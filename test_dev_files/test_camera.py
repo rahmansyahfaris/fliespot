@@ -72,8 +72,8 @@ import cv2
 start = time.time()
 count = 0
 
-net = cv2.dnn.readNetFromONNX('./object_detection_model/phone_yolov5s_batch_2_epochs_10_best.onnx')
-classes = ['a', 'phone', 'b']
+net = cv2.dnn.readNetFromONNX('./model/truecfmonochrome.onnx')
+classes = ['bottle', 'key', 'phone', 'wallet']
 
 while(1):
     # First get the info

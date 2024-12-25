@@ -2,7 +2,7 @@ import tkinter as tk
 import time
 from multiprocessing import Process, Queue, Event, Manager
 import threading
-import crazy_flight, crazy_camera, crazy_telegram
+import crazy_flight, crazy_camera, crazy_telegram, esp_alarm_trigger
 from test_dev_files.crazy_flight_variations import crazy_flight_a, crazy_flight_b, crazy_flight_c # for control testing purposes
 import update_env_config
 from threading import Thread
@@ -17,13 +17,6 @@ import yaml
 # ex: config['default_height'] will get the value of default_height in config.yaml
 # "config" is used not because the file name is config.yaml but because the
 # variable assigned to yaml.safe_load (the one with equal sign) in the with statement is called config
-
-# Load each configuration file (commented because moved to main block)
-"""
-uri = load_yaml_config('config/uri.yaml')
-telegram_info = load_yaml_config('config/telegram_info.yaml')
-config = load_yaml_config('config/config.yaml')
-"""
 
 processes = [] # to list all child processes so that we can close all of them at once or do something about them
 threads = [] # to list all the threads
@@ -64,17 +57,29 @@ def crazyWait(common_event, common_var):
             crazyTelegramProcess.terminate()
             crazyTelegramProcess.join()
         print("Crazy Telegram Process Terminated")
+    common_event['finishESPAlarm'].set()
     threads.remove(crazyThread)
     # flyButton.config(text="Fly",command=startCrazyFlight) # reset the button (commented because not thread-safe
     # use the code below (root.after) instead for thread safety and this should be used for all elements outside the
     # main thread like this one crazyFlightWait which is a function that will be run as a thread)
     if not common_event["shutdown"].is_set():
-        root.after(0, lambda: flyButton.config(text="Fly", command=startCrazyFlight, state="normal")) # reset the button
+        root.after(0, lambda: flyButton.config(text="Fly!", command=startCrazyFlight, state="normal")) # reset the button
     return
+
+def ESPAlarm(common_event, common_var): # thread to poll and trigger ESP32 alarm
+    while True:
+        if common_event['triggerESPAlarm'].is_set():
+            # Run alarm trigger function
+            esp_alarm_trigger.ESPAlarmTrigger(common_var['esp_info'])
+            common_event['triggerESPAlarm'].clear()
+        if common_event['finishESPAlarm'].is_set():
+            print("Terminating ESP Alarm Thread")
+            break
+    threads.remove(espThread)
 
 def startCrazyFlight():
     # basically starting the flying mechanism, polling for flight abort
-    global processes, threads, crazyThread, crazyFlightProcess, crazyCameraProcess, crazyTelegramProcess
+    global processes, threads, crazyThread, espThread, crazyFlightProcess, crazyCameraProcess, crazyTelegramProcess
 
     # it is important to clear each events before starting again,
     # if not, it will only work the first time, the next one will be error
@@ -82,11 +87,20 @@ def startCrazyFlight():
                   common_event['crazyAbortEvent'],
                   common_event['finishCrazyCamera'],
                   common_event['cameraAbortEvent'],
-                  common_event['finishCrazyTelegram']])
+                  common_event['objectDetectedEvent'],
+                  common_event['finishCrazyTelegram'],
+                  common_event['triggerESPAlarm'],
+                  common_event['finishESPAlarm']])
     
+    # Process monitoring thread
     crazyThread = Thread(target=crazyWait, args=(common_event, common_var,))
     crazyThread.start() # start thread that polls
     threads.append(crazyThread)
+
+    if common_var['extras']['esp_enabled']:
+        espThread = Thread(target=ESPAlarm, args=(common_event, common_var,))
+        espThread.start()
+        threads.append(espThread)
 
     # Processes Making
     if common_var['config']['flight_enabled']:
@@ -103,8 +117,10 @@ def startCrazyFlight():
         crazyTelegramProcess = Process(target=crazy_telegram.crazyTelegram, args=(common_var,))
         crazyTelegramProcess.start()
         processes.append(crazyTelegramProcess)
+
     # change button to now function as abort/cancel
     flyButton.config(text="Stop",command=lambda: stopCrazyFlight(common_event))
+
     return
 
 def stopCrazyFlight(common_event):
@@ -220,9 +236,9 @@ def on_closing():
 
 if __name__ == "__main__":
 
-    # unifying events in the beginning, putting them inside a shared dictionary with manager
+    # unifying events and variables in the beginning, putting them inside a shared dictionary with manager
 
-    manager = Manager()
+    manager = Manager() # shared events across processes and threads
 
     common_event = manager.dict()
 
@@ -233,6 +249,7 @@ if __name__ == "__main__":
     to print "Camera Aborted" when the crazyCameraProcess finished, to differentiate termination due to abort and
     other terminations """
     common_event['cameraAbortEvent'] = manager.Event()
+    common_event['objectDetectedEvent'] = manager.Event()
     """
     currently, the finishCrazyCamera event serves as an indication of camera trigger
     (even though the camera has not yet been installed) as well as an indication of
@@ -240,6 +257,8 @@ if __name__ == "__main__":
     """
     common_event['finishCrazyCamera'] = manager.Event() # event to indicate that crazyCameraProcess has finished/returned
     common_event['finishCrazyTelegram'] = manager.Event()
+    common_event['triggerESPAlarm'] = manager.Event() # event to trigger ESP32 Alarm
+    common_event['finishESPAlarm'] = manager.Event() # event to stop ESP32 Alarm thread (espThread)
     common_event['shutdown'] = manager.Event() # event to indicate that close button is pressed
 
     common_var = manager.dict() # shared variables across processes and threads
@@ -250,6 +269,8 @@ if __name__ == "__main__":
     common_var['config'] = register_commands.load_yaml_config('config/config.yaml')
     common_var['camera'] = register_commands.load_yaml_config('config/camera.yaml')
     common_var['extras'] = register_commands.load_yaml_config('config/extras.yaml')
+    common_var['esp_info'] = register_commands.load_yaml_config('config/esp_info.yaml')
+    common_var['keybinds'] = register_commands.load_yaml_config('config/keybinds.yaml')
     # Get the directory where the current script (or .exe) is located (not used, only used for debugging and emergency)
     # For Command Registering
     """

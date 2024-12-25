@@ -1,15 +1,11 @@
 import time
 from datetime import datetime
-import os
 import math
 import cflib
 from cflib.crazyflie import Crazyflie
-from dotenv import load_dotenv
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.positioning.motion_commander import MotionCommander
 from cflib.utils import uri_helper
-from multiprocessing import Process, Event
-from threading import Thread
 from cflib.crazyflie.log import LogConfig
 
 
@@ -154,6 +150,7 @@ def crazyFlight(common_var, common_event):
     try:
         with SyncCrazyflie(uri, cf=Crazyflie(rw_cache='./cache')) as scf:
             # Set up logging
+
             log_conf = LogConfig(name='Logging', period_in_ms=100)
             log_conf.add_variable('stateEstimate.x', 'float')
             log_conf.add_variable('stateEstimate.y', 'float')
@@ -166,15 +163,17 @@ def crazyFlight(common_var, common_event):
             print("FLIGHT STATUS: Starting log")
             log_conf.start()
 
-            print("FLIGHT STATUS: Taking off")
-            #isEnteringNewMovement = True
+            isEnteringNewMovement = True
+            time.sleep(0.5)
             with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
+                isEnteringNewMovement = True
+                time.sleep(0.5)
                 print("FLIGHT STATUS: Little pause before starting")
                 pos_desired_x = 0.0
                 pos_desired_y = 0.0
                 pid_x = PID(Kp_x, Ki_x, Kd_x, setpoint=pos_desired_x)
                 pid_y = PID(Kp_y, Ki_y, Kd_y, setpoint=pos_desired_y)
-                initial_timeout = 5 # in seconds
+                initial_timeout = common_var['config']['initial_pause_duration'] # in seconds
                 initial_start_time = time.time()
                 while True:
                     initial_elapsed_time = time.time() - initial_start_time
@@ -204,8 +203,7 @@ def crazyFlight(common_var, common_event):
                         pid_y = PID(Kp_y, Ki_y, Kd_y, setpoint=pos_desired_y)
                         #print("DEBUG FLIGHT: X, {command['x']} meter, ")
                         while yet_reached(pos_current_x, pos_desired_x):
-                            if common_event['crazyAbortEvent'].is_set():
-                                print("FLIGHT STATUS: Aborting Flight")
+                            if common_event['crazyAbortEvent'].is_set() or common_event["objectDetectedEvent"].is_set():
                                 break
                             # Calculate control signal for y-axis
                             control_velocity_y = pid_y.compute(pos_current_y)
@@ -226,8 +224,7 @@ def crazyFlight(common_var, common_event):
                             hold_time_elapsed = time.time() - hold_time_start
                             if hold_time_elapsed > hold_duration:
                                 break
-                            if common_event['crazyAbortEvent'].is_set():
-                                print("FLIGHT STATUS: Aborting Flight")
+                            if common_event['crazyAbortEvent'].is_set() or common_event["objectDetectedEvent"].is_set():
                                 break
                             control_velocity_x = pid_x.compute(pos_current_x)
                             control_velocity_y = pid_y.compute(pos_current_y)
@@ -243,8 +240,7 @@ def crazyFlight(common_var, common_event):
                         pos_desired_y = command['y']
                         pid_x = PID(Kp_x, Ki_x, Kd_x, setpoint=pos_desired_x)
                         while yet_reached(pos_current_y, pos_desired_y):
-                            if common_event['crazyAbortEvent'].is_set():
-                                print("FLIGHT STATUS: Aborting Flight")
+                            if common_event['crazyAbortEvent'].is_set() or common_event["objectDetectedEvent"].is_set():
                                 break
                             # Calculate control signal for y-axis
                             control_velocity_x = pid_x.compute(pos_current_x)
@@ -265,8 +261,7 @@ def crazyFlight(common_var, common_event):
                             hold_time_elapsed = time.time() - hold_time_start
                             if hold_time_elapsed > hold_duration:
                                 break
-                            if common_event['crazyAbortEvent'].is_set():
-                                print("FLIGHT STATUS: Aborting Flight")
+                            if common_event['crazyAbortEvent'].is_set() or common_event["objectDetectedEvent"].is_set():
                                 break
                             control_velocity_x = pid_x.compute(pos_current_x)
                             control_velocity_y = pid_y.compute(pos_current_y)
@@ -277,7 +272,7 @@ def crazyFlight(common_var, common_event):
                     elif command['yaw'] != 0:
                         isEnteringNewMovement = True
                         # yawDegreeChange change was moved to here (see test_pid_10.py if you want to know where
-                        # it's located previously, this has made the flight more stable)
+                        # it's located previously, this has made the flight a little bit more stable and still not always)
                         yawDegreeChange += command['yaw'] # yaw degree change (remember don't use equal, use increment)
                         if command['yaw'] >= 0:
                             mc.turn_left(command['yaw'], command['rate'])
@@ -297,8 +292,7 @@ def crazyFlight(common_var, common_event):
                             hold_time_elapsed = time.time() - hold_time_start
                             if hold_time_elapsed > hold_duration:
                                 break
-                            if common_event['crazyAbortEvent'].is_set():
-                                print("FLIGHT STATUS: Aborting Flight")
+                            if common_event['crazyAbortEvent'].is_set() or common_event["objectDetectedEvent"].is_set():
                                 break
                             control_velocity_x = pid_x.compute(pos_current_x)
                             control_velocity_y = pid_y.compute(pos_current_y)
@@ -321,7 +315,7 @@ def crazyFlight(common_var, common_event):
                             hold_time_elapsed = time.time() - hold_time_start
                             if hold_time_elapsed > hold_duration:
                                 break
-                            if common_event['crazyAbortEvent'].is_set():
+                            if common_event['crazyAbortEvent'].is_set() or common_event["objectDetectedEvent"].is_set():
                                 print("FLIGHT STATUS: Aborting Flight")
                                 break
                             control_velocity_x = pid_x.compute(pos_current_x)
@@ -330,12 +324,37 @@ def crazyFlight(common_var, common_event):
                             time.sleep(0.1) # little delay to not overwhelm the drone
                         mc.start_linear_motion(0, 0, 0) # stay still
                         #time.sleep(2) # pause before next movement
-                    if common_event['crazyAbortEvent'].is_set():
-                        print("FLIGHT STATUS: Aborting Flight")
+                    if common_event['crazyAbortEvent'].is_set() or common_event["objectDetectedEvent"].is_set():
                         break
+                if common_event['crazyAbortEvent'].is_set():
+                    print("FLIGHT STATUS: Aborting Flight")
+                if common_event['objectDetectedEvent'].is_set():
+                    print("FLIGHT STATUS: Object Found")
+                    isEnteringNewMovement = True
+                    mc.start_linear_motion(0, 0, 0) # stay still
+                    #isEnteringNewMovement = True
+                    pos_desired_x = 0.0
+                    pos_desired_y = 0.0
+                    pid_x = PID(Kp_x, Ki_x, Kd_x, setpoint=pos_desired_x)
+                    pid_y = PID(Kp_y, Ki_y, Kd_y, setpoint=pos_desired_y)
+                    hold_duration = common_var['camera']['flight_on_found_stay_duration']
+                    hold_time_start = time.time()
+                    while True:
+                        hold_time_elapsed = time.time() - hold_time_start
+                        if hold_time_elapsed > hold_duration:
+                            break
+                        if common_event['crazyAbortEvent'].is_set():
+                            print("FLIGHT STATUS: Aborting Flight")
+                            break
+                        control_velocity_x = pid_x.compute(pos_current_x)
+                        control_velocity_y = pid_y.compute(pos_current_y)
+                        mc.start_linear_motion(control_velocity_x, control_velocity_y, 0)
+                        time.sleep(0.1) # little delay to not overwhelm the drone
+                    mc.start_linear_motion(0, 0, 0) # stay still
+                    #time.sleep(2) # pause before next movement
 
                 mc.stop()
-                print("STATUS: Target reached, landing")
+                print("STATUS: Landing")
             
             log_conf.stop()
             cs_log_file.close()
@@ -353,5 +372,3 @@ def crazyFlight(common_var, common_event):
     print("Crazy Flight Process Terminating")
     common_event["finishCrazyFlight"].set()
     return
-
-

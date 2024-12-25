@@ -4,3 +4,4 @@ model/
 .env
 config/telegram_info.yaml
 config/uri.yaml
+config/esp_info.yaml
