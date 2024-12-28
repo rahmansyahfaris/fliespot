@@ -1,22 +1,9 @@
 import tkinter as tk
-import time
-from multiprocessing import Process, Queue, Event, Manager
-import threading
+from multiprocessing import Process, Manager
 import crazy_flight, crazy_camera, crazy_telegram, esp_alarm_trigger
 from test_dev_files.crazy_flight_variations import crazy_flight_a, crazy_flight_b, crazy_flight_c # for control testing purposes
-import update_env_config
 from threading import Thread
 import register_commands
-import os
-import sys
-import yaml
-
-# configuration
-# usage: variable_name['key'] to get the value
-# ex: uri['uri'] will get the value of uri in uri.yaml
-# ex: config['default_height'] will get the value of default_height in config.yaml
-# "config" is used not because the file name is config.yaml but because the
-# variable assigned to yaml.safe_load (the one with equal sign) in the with statement is called config
 
 processes = [] # to list all child processes so that we can close all of them at once or do something about them
 threads = [] # to list all the threads
@@ -166,8 +153,8 @@ def createTkinterGUI():
     forceStopButton = tk.Button(root, text="Force Stop", command=lambda: forceStop(common_event))
     forceStopButton.pack(pady=10)
 
-    open_config_button = tk.Button(root, text="Open Config Window", command=openConfig)
-    open_config_button.pack(pady=20)
+    #open_config_button = tk.Button(root, text="Open Config Window", command=openConfig)
+    #open_config_button.pack(pady=20)
 
     # Handle the close event to terminate the process
     root.protocol("WM_DELETE_WINDOW", on_closing)

@@ -188,7 +188,6 @@ def crazyFlight(common_var, common_event):
                     mc.start_linear_motion(control_velocity_x, control_velocity_y, 0)
                     time.sleep(0.1) # little delay to not overwhelm the drone
                 mc.start_linear_motion(0, 0, 0) # stay still
-                #time.sleep(2)
 
                 print("FLIGHT STATUS: Starting commanded movement")
 
@@ -231,7 +230,6 @@ def crazyFlight(common_var, common_event):
                             mc.start_linear_motion(control_velocity_x, control_velocity_y, 0)
                             time.sleep(0.1) # little delay to not overwhelm the drone
                         mc.start_linear_motion(0, 0, 0) # stay still
-                        #time.sleep(2) # pause before next movement
                     elif command['y'] != 0:
                         isEnteringNewMovement = True
                         negate = 1 if command['y'] >= 0 else -1
@@ -268,17 +266,13 @@ def crazyFlight(common_var, common_event):
                             mc.start_linear_motion(control_velocity_x, control_velocity_y, 0)
                             time.sleep(0.1) # little delay to not overwhelm the drone
                         mc.start_linear_motion(0, 0, 0) # stay still
-                        #time.sleep(2) # pause before next movement
                     elif command['yaw'] != 0:
                         isEnteringNewMovement = True
-                        # yawDegreeChange change was moved to here (see test_pid_10.py if you want to know where
-                        # it's located previously, this has made the flight a little bit more stable and still not always)
                         yawDegreeChange += command['yaw'] # yaw degree change (remember don't use equal, use increment)
                         if command['yaw'] >= 0:
                             mc.turn_left(command['yaw'], command['rate'])
                         elif command['yaw'] < 0:
                             mc.turn_right(command['yaw']*-1, command['rate'])
-                        # yawDegreeChange was here previously
                         print(f"FLIGHT STATUS: Pause before next movement ({command['hold']} seconds)")
                         mc.start_linear_motion(0, 0, 0) # stay still
                         #isEnteringNewMovement = True
@@ -299,12 +293,10 @@ def crazyFlight(common_var, common_event):
                             mc.start_linear_motion(control_velocity_x, control_velocity_y, 0)
                             time.sleep(0.1) # little delay to not overwhelm the drone
                         mc.start_linear_motion(0, 0, 0) # stay still
-                        #time.sleep(2) # pause before next movement
                     else:
                         isEnteringNewMovement = True
                         print(f"FLIGHT STATUS: Pause before next movement ({command['hold']} seconds)")
                         mc.start_linear_motion(0, 0, 0) # stay still
-                        #isEnteringNewMovement = True
                         pos_desired_x = 0.0
                         pos_desired_y = 0.0
                         pid_x = PID(Kp_x, Ki_x, Kd_x, setpoint=pos_desired_x)
@@ -323,7 +315,6 @@ def crazyFlight(common_var, common_event):
                             mc.start_linear_motion(control_velocity_x, control_velocity_y, 0)
                             time.sleep(0.1) # little delay to not overwhelm the drone
                         mc.start_linear_motion(0, 0, 0) # stay still
-                        #time.sleep(2) # pause before next movement
                     if common_event['crazyAbortEvent'].is_set() or common_event["objectDetectedEvent"].is_set():
                         break
                 if common_event['crazyAbortEvent'].is_set():
@@ -332,7 +323,6 @@ def crazyFlight(common_var, common_event):
                     print("FLIGHT STATUS: Object Found")
                     isEnteringNewMovement = True
                     mc.start_linear_motion(0, 0, 0) # stay still
-                    #isEnteringNewMovement = True
                     pos_desired_x = 0.0
                     pos_desired_y = 0.0
                     pid_x = PID(Kp_x, Ki_x, Kd_x, setpoint=pos_desired_x)
