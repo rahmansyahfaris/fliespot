@@ -3,6 +3,7 @@ import argparse
 import time
 import socket, struct, time
 import numpy as np
+import cv2
 
 def crazyCamera(common_event, common_var):
 
@@ -25,7 +26,6 @@ def crazyCamera(common_event, common_var):
         print("Socket connected")
     except (socket.error, socket.timeout) as err:
         print(f"Failed to connect to socket: {err}")
-        common_event['finishCrazyTelegram'].set()
         common_event['crazyAbortEvent'].set()
         common_event['finishCrazyCamera'].set()
         return
@@ -40,13 +40,12 @@ def crazyCamera(common_event, common_var):
                 data.extend(client_socket.recv(size-len(data)))
         except Exception as err:
             print(f"Error: Possibly a timeout error. {err}")
-            common_event['finishCrazyTelegram'].set()
             common_event['crazyAbortEvent'].set()
             common_event['finishCrazyCamera'].set()
             return
         return data
 
-    import cv2
+
 
     start = time.time()
     count = 0
@@ -59,7 +58,6 @@ def crazyCamera(common_event, common_var):
             classes = [line.strip() for line in file]
     except Exception as err:
         print(f"Crazy Camera Process Terminating due to {err}")
-        common_event['finishCrazyTelegram'].set()
         common_event['crazyAbortEvent'].set()
         common_event['finishCrazyCamera'].set()
         return
@@ -110,7 +108,6 @@ def crazyCamera(common_event, common_var):
                 #print("{}".format(1/meanTimePerImage)) // this was not commented initially
         except Exception as err:
             print(f"Crazy Camera Process Terminating due to {err}")
-            common_event['finishCrazyTelegram'].set()
             common_event['crazyAbortEvent'].set()
             common_event['finishCrazyCamera'].set()
             return
@@ -149,7 +146,9 @@ def crazyCamera(common_event, common_var):
                         box = np.array([x1, y1, width, height])
                         boxes.append(box)
 
-            indices = cv2.dnn.NMSBoxes(boxes, confidences, common_var['camera']['confidence_threshold'], common_var['camera']['confidence_threshold'])
+            indices = cv2.dnn.NMSBoxes(boxes, confidences,
+                                       common_var['camera']['confidence_threshold'],
+                                       common_var['camera']['confidence_threshold'])
             for i in indices:
                 x1, y1, w, h = boxes[i]
                 label = classes[classes_ids[i]]
@@ -187,7 +186,6 @@ def crazyCamera(common_event, common_var):
     if common_event['crazyAbortEvent'].is_set():
         print("Aborting Camera")
         common_event['cameraAbortEvent'].set()
-    
-    common_event['finishCrazyTelegram'].set()
+        
     common_event['finishCrazyCamera'].set()
     return

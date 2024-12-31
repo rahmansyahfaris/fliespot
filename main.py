@@ -1,7 +1,7 @@
 import tkinter as tk
 from multiprocessing import Process, Manager
-import crazy_flight, crazy_camera, crazy_telegram, esp_alarm_trigger
-from test_dev_files.crazy_flight_variations import crazy_flight_a, crazy_flight_b, crazy_flight_c # for control testing purposes
+import crazy_flight, crazy_camera, esp_alarm_trigger
+#from test_dev_files.crazy_flight_variations import crazy_flight_a, crazy_flight_b, crazy_flight_c # for control testing purposes
 from threading import Thread
 import register_commands
 
@@ -38,12 +38,6 @@ def crazyWait(common_event, common_var):
             crazyCameraProcess.join()
         print("Crazy Camera Process Terminated")
         processes.remove(crazyCameraProcess)
-    if common_var['extras']['telegram_enabled']:
-        common_event["finishCrazyTelegram"].wait()
-        if crazyTelegramProcess.is_alive():
-            crazyTelegramProcess.terminate()
-            crazyTelegramProcess.join()
-        print("Crazy Telegram Process Terminated")
     common_event['finishESPAlarm'].set()
     threads.remove(crazyThread)
     # flyButton.config(text="Fly",command=startCrazyFlight) # reset the button (commented because not thread-safe
@@ -66,7 +60,7 @@ def ESPAlarm(common_event, common_var): # thread to poll and trigger ESP32 alarm
 
 def startCrazyFlight():
     # basically starting the flying mechanism, polling for flight abort
-    global processes, threads, crazyThread, espThread, crazyFlightProcess, crazyCameraProcess, crazyTelegramProcess
+    global processes, threads, crazyThread, espThread, crazyFlightProcess, crazyCameraProcess
 
     # it is important to clear each events before starting again,
     # if not, it will only work the first time, the next one will be error
@@ -75,7 +69,6 @@ def startCrazyFlight():
                   common_event['finishCrazyCamera'],
                   common_event['cameraAbortEvent'],
                   common_event['objectDetectedEvent'],
-                  common_event['finishCrazyTelegram'],
                   common_event['triggerESPAlarm'],
                   common_event['finishESPAlarm']])
     
@@ -100,10 +93,6 @@ def startCrazyFlight():
         crazyCameraProcess = Process(target=crazy_camera.crazyCamera, args=(common_event, common_var))
         crazyCameraProcess.start()
         processes.append(crazyCameraProcess)
-    if common_var['extras']['telegram_enabled']:
-        crazyTelegramProcess = Process(target=crazy_telegram.crazyTelegram, args=(common_var,))
-        crazyTelegramProcess.start()
-        processes.append(crazyTelegramProcess)
 
     # change button to now function as abort/cancel
     flyButton.config(text="Stop",command=lambda: stopCrazyFlight(common_event))
@@ -121,7 +110,6 @@ def stopCrazyFlight(common_event):
 def forceStop(common_event):
     common_event["finishCrazyFlight"].set()
     common_event["finishCrazyCamera"].set()
-    common_event["finishCrazyTelegram"].set()
 
 def createTkinterGUI():
     global root, flyButton, displayURI, entryURI
@@ -210,9 +198,6 @@ def on_closing():
         if thread.is_alive():
             thread.join()
     
-    # update_env_config.change_env_value("URI", crazy_flight.tempURI)
-    # # URI will not be saved for now
-    
     for process in processes:
         if process.is_alive():
             process.terminate()
@@ -243,7 +228,6 @@ if __name__ == "__main__":
     crazyCameraProcess end or termination
     """
     common_event['finishCrazyCamera'] = manager.Event() # event to indicate that crazyCameraProcess has finished/returned
-    common_event['finishCrazyTelegram'] = manager.Event()
     common_event['triggerESPAlarm'] = manager.Event() # event to trigger ESP32 Alarm
     common_event['finishESPAlarm'] = manager.Event() # event to stop ESP32 Alarm thread (espThread)
     common_event['shutdown'] = manager.Event() # event to indicate that close button is pressed
@@ -252,7 +236,6 @@ if __name__ == "__main__":
 
     common_var['uri'] = register_commands.load_yaml_config('config/uri.yaml')
     displayURIText = f"URI: {common_var['uri']['uri']}"
-    common_var['telegram_info'] = register_commands.load_yaml_config('config/telegram_info.yaml')
     common_var['config'] = register_commands.load_yaml_config('config/config.yaml')
     common_var['camera'] = register_commands.load_yaml_config('config/camera.yaml')
     common_var['extras'] = register_commands.load_yaml_config('config/extras.yaml')

@@ -150,7 +150,6 @@ def crazyFlight(common_var, common_event):
     try:
         with SyncCrazyflie(uri, cf=Crazyflie(rw_cache='./cache')) as scf:
             # Set up logging
-
             log_conf = LogConfig(name='Logging', period_in_ms=100)
             log_conf.add_variable('stateEstimate.x', 'float')
             log_conf.add_variable('stateEstimate.y', 'float')
