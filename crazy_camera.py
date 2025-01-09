@@ -45,8 +45,6 @@ def crazyCamera(common_event, common_var):
             return
         return data
 
-
-
     start = time.time()
     count = 0
 
