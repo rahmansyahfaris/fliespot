@@ -1,40 +1,38 @@
-// Function to check the current button status
-function checkButtonStatus() {
-    fetch('/status')
-        .then(response => response.json())
-        .then(data => {
-            const button = document.getElementById("action-button");
-            const header = document.getElementById("header"); // Get the header element
+document.addEventListener("DOMContentLoaded", function() {
+    // Add event listener to toggle button
+    const toggleButton = document.getElementById("toggle-advanced-configs");
+    const advancedConfigs = document.getElementById("advanced-configs");
 
-            button.innerText = data.button_text;
-            button.setAttribute("data-action", data.next_action);
-            header.innerText = data.header_text; // Update the header text
-        })
-        .catch(error => console.error('Error:', error));
-}
+    toggleButton.addEventListener("click", function() {
+        // Toggle the visibility of the advanced configurations
+        if (advancedConfigs.style.display === "none") {
+            advancedConfigs.style.display = "block";
+        } else {
+            advancedConfigs.style.display = "none";
+        }
+    });
 
-// Function to handle button clicks
-function handleButtonClick() {
-    const button = document.getElementById("action-button");
-    const action = button.getAttribute("data-action");
+    // Add event listener to the form for submitting configurations
+    document.getElementById("config-form").addEventListener("submit", async function(event) {
+        event.preventDefault();  // Prevent the form from submitting normally
 
-    fetch(action, { method: 'POST' })
-        .then(response => response.json())
-        .then(data => {
-            const header = document.getElementById("header"); // Get the header element
+        // Collect all form data
+        const formData = new FormData(document.getElementById("config-form"));
+        
+        // Send the form data to the backend via a POST request
+        const response = await fetch("/set_configs", {
+            method: "POST",
+            body: formData
+        });
 
-            button.innerText = data.button_text;
-            button.setAttribute("data-action", data.next_action);
-            header.innerText = data.header_text; // Update the header text
-        })
-        .catch(error => console.error('Error:', error));
-}
+        // Parse the JSON response
+        const result = await response.json();
 
-// Initialize polling and set up button click listener
-window.onload = () => {
-    checkButtonStatus();
-    setInterval(checkButtonStatus, 1000);
+        // Display the success message
+        document.getElementById("notification").innerText = result.message;
+    });
 
-    const button = document.getElementById("action-button");
-    button.addEventListener('click', handleButtonClick);
-};
+
+    // 1 Second Interval Refresh
+    //setInterval(function () {}, 1000); // Interval in milliseconds (1 second)
+});

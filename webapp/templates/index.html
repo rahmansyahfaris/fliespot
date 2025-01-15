@@ -3,12 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fliespot Web App</title>
-    <!-- Link to the JavaScript file -->
-    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <title>Drone Configurations</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <h1 id="header">Drone is Ready</h1>
-    <button id="action-button" data-action="/trigger_button_change">START</button>
+    <h1>Configurations</h1>
+
+    <!-- Hidden Dropdown for Advanced Configurations -->
+    <div style="margin-top: 10px;">
+
+        <label for="commands">Commands:</label><br>
+            <textarea id="commands" name="command" 
+                        placeholder="Enter commands here..." 
+                        rows="5" cols="40"></textarea><br><br>
+
+        <!-- Dropdown Trigger -->
+        <button id="toggle-advanced-configs">Advanced Configurations</button>
+
+        <form id="config-form">
+            <div id="advanced-configs" style="display: none; margin-top: 10px;">
+                <label for="default_height">Default Height:</label><br>
+                <input type="text" id="default_height" name="default_height" 
+                    value="{{ configurations['config']['default_height'] }}" 
+                    placeholder="Drone's flight height in meters (e.g., 1.0)" /><br>
+                <label for="default_velocity">Default Velocity:</label><br>
+                <input type="text" id="default_velocity" name="default_velocity" 
+                    value="{{ configurations['config']['default_velocity'] }}" 
+                    placeholder="Drone's velocity in m/s (e.g., 0.2)" /><br>
+                <label for="default_hold_time">Default Pause Time:</label><br>
+                <input type="text" id="default_hold_time" name="default_hold_time" 
+                    value="{{ configurations['config']['default_hold_time'] }}" 
+                    placeholder="Default pause duration in between commands (e.g., 2.0)" /><br>
+            </div>
+            
+            <button type="submit">Apply Configurations</button>
+        </form>
+        <p id="notification" style="color: green;"></p>
+    </div>
+
+    <!-- Link to external JavaScript file -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
 </html>

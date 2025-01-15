@@ -66,18 +66,6 @@ def crazyCamera(common_event, common_var):
 
     while True:
 
-        """
-        if common_var['extras']['webapp_enabled']:
-            print("Crazy Camera waiting for web app signal")
-            while True:
-                if common_event['startFromWebApp'].is_set():
-                    break
-                if common_event['crazyAbortEvent'].is_set():
-                    print("Crazy Camera aborted while waiting for web app")
-                    break
-                time.sleep(0.1)
-        """
-
         if common_event['crazyAbortEvent'].is_set() or common_event['cameraAbortEvent'].is_set():
             break
 

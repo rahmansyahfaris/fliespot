@@ -1,281 +1,474 @@
 INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
  * Running on http://127.0.0.1:8080
+ * Running on http://192.168.28.13:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:14:54] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:14:54] "GET /static/js/app.js HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:14:54] "GET /static/css/style.css HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:14:54] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:14:54] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:14:58] "[33mPOST /set_height HTTP/1.1[0m" 404 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.28.13:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.28.13:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:29:38] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:29:38] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:29:38] "GET /static/js/app.js HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:29:38] "GET / HTTP/1.1" 200 -
+ERROR:main:Exception on /set_configs [POST]
+Traceback (most recent call last):
+  File "C:\Users\Faris\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Faris\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Faris\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Faris\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Faris\Documents\Crazyflie\faris-fliespot\main.py", line 30, in set_configs
+    "message": f"Configurations updated: {configurations}"
+                                          ^^^^^^^^^^^^^^
+NameError: name 'configurations' is not defined
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:29:41] "[35m[1mPOST /set_configs HTTP/1.1[0m" 500 -
+ERROR:main:Exception on /set_configs [POST]
+Traceback (most recent call last):
+  File "C:\Users\Faris\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Faris\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Faris\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Faris\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Faris\Documents\Crazyflie\faris-fliespot\main.py", line 30, in set_configs
+    "message": f"Configurations updated: {configurations}"
+                                          ^^^^^^^^^^^^^^
+NameError: name 'configurations' is not defined
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:29:47] "[35m[1mPOST /set_configs HTTP/1.1[0m" 500 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.28.13:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:30:21] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:30:21] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:30:21] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:30:21] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:30:23] "POST /set_configs HTTP/1.1" 200 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.28.13:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:31:04] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:31:04] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:31:04] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:31:04] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:31:06] "POST /set_configs HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:31:12] "POST /set_configs HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:31:12] "POST /set_configs HTTP/1.1" 200 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.28.13:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:32:59] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:32:59] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:32:59] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:32:59] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:33:01] "POST /set_configs HTTP/1.1" 200 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.28.13:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:46:31] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:46:31] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:46:31] "GET /static/js/app.js HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:46:31] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 09:47:06] "POST /set_configs HTTP/1.1" 200 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.28.13:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:01:21] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:01:21] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:01:21] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:01:21] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.28.13:8080
 INFO:werkzeug:[33mPress CTRL+C to quit[0m
 INFO:werkzeug: * Restarting with stat
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 136-684-303
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:04:38] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:04:38] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:04:38] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:04:38] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:04:55] "POST /set_configs HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:11:22] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:11:22] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:11:22] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:11:22] "GET / HTTP/1.1" 200 -
+INFO:werkzeug: * Detected change in 'C:\\Users\\Faris\\Documents\\Crazyflie\\faris-fliespot\\main.py', reloading
 INFO:werkzeug: * Restarting with stat
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug: * Restarting with stat
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug: * Restarting with stat
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug: * Restarting with stat
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug: * Restarting with stat
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug: * Restarting with stat
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug: * Restarting with stat
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug: * Restarting with stat
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug: * Restarting with stat
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug: * Restarting with stat
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug: * Restarting with stat
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug: * Restarting with stat
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug: * Restarting with stat
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug: * Restarting with stat
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug: * Restarting with stat
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug: * Restarting with stat
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug: * Restarting with stat
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug: * Restarting with stat
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug: * Restarting with stat
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug: * Restarting with stat
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug: * Restarting with stat
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug: * Restarting with stat
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug: * Restarting with stat
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug: * Restarting with stat
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug: * Restarting with stat
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug: * Restarting with stat
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug: * Restarting with stat
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug: * Restarting with stat
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug: * Restarting with stat
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 11:50:10] "GET / HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 11:50:10] "GET /static/js/app.js HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 11:50:10] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 11:50:10] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 11:50:10] "GET / HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 11:50:11] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 11:50:12] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 11:50:13] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 11:51:21] "GET / HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 11:51:21] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 11:51:21] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 11:51:22] "GET / HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 11:51:22] "POST /trigger_button_change HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 11:51:22] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 11:51:23] "POST /clear_event HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 11:51:23] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 11:51:24] "POST /trigger_button_change HTTP/1.1" 200 -
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:14:13] "GET / HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:14:13] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:14:13] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:14:13] "GET / HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:14:14] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:14:14] "POST /trigger_button_change HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:14:15] "POST /clear_event HTTP/1.1" 200 -
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:16:54] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:16:54] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:16:54] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:16:55] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:16:56] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:16:56] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:16:57] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:17:46] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:17:46] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:17:46] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:17:48] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:17:48] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:17:50] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:17:50] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:17:57] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:17:57] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:17:57] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:17:58] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:17:59] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:18:01] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:18:01] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:18:07] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:18:07] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:18:07] "GET / HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:18:07] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:18:07] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:18:07] "GET / HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:18:08] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:18:09] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:18:10] "POST /trigger_button_change HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:18:10] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:18:11] "POST /clear_event HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:18:11] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:5000
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:5000
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:5000
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:8080
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:23:08] "GET / HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:23:08] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:23:08] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:23:08] "GET / HTTP/1.1" 200 -
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 136-684-303
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:17:01] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:17:01] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:17:01] "GET /static/js/app.js HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:17:01] "GET / HTTP/1.1" 200 -
 INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on all addresses (0.0.0.0)
  * Running on http://127.0.0.1:8080
  * Running on http://192.168.43.162:8080
 INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:28:06] "GET / HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:28:06] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:28:06] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:28:06] "GET / HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:28:07] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:28:08] "GET /status HTTP/1.1" 200 -
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 136-684-303
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:02] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:02] "GET /static/css/style.css HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:02] "[33mGET /status HTTP/1.1[0m" 404 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:02] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:03] "[33mGET /status HTTP/1.1[0m" 404 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:04] "[33mGET /status HTTP/1.1[0m" 404 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:05] "[33mGET /status HTTP/1.1[0m" 404 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:06] "[33mGET /status HTTP/1.1[0m" 404 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:07] "[33mGET /status HTTP/1.1[0m" 404 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:08] "[33mGET /status HTTP/1.1[0m" 404 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:09] "[33mGET /status HTTP/1.1[0m" 404 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:10] "[33mGET /status HTTP/1.1[0m" 404 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:11] "[33mGET /status HTTP/1.1[0m" 404 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:12] "[33mGET /status HTTP/1.1[0m" 404 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:13] "[33mGET /status HTTP/1.1[0m" 404 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:14] "[33mGET /status HTTP/1.1[0m" 404 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:15] "[33mGET /status HTTP/1.1[0m" 404 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:16] "[33mGET /status HTTP/1.1[0m" 404 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:17] "[33mGET /status HTTP/1.1[0m" 404 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:18] "[33mGET /status HTTP/1.1[0m" 404 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:19] "[33mGET /status HTTP/1.1[0m" 404 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:20] "[33mGET /status HTTP/1.1[0m" 404 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:21] "[33mGET /status HTTP/1.1[0m" 404 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:22] "[33mGET /status HTTP/1.1[0m" 404 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:23] "[33mGET /status HTTP/1.1[0m" 404 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:24] "[33mGET /status HTTP/1.1[0m" 404 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:25] "[33mGET /status HTTP/1.1[0m" 404 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:26] "[33mGET /status HTTP/1.1[0m" 404 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:27] "[33mGET /status HTTP/1.1[0m" 404 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:28] "GET /?default_height=1.0&default_velocity=0.2&default_hold_time=2.0 HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:28] "GET /static/js/app.js HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:28] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:32] "POST /set_configs HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:38] "POST /set_configs HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:38] "POST /set_configs HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:19:43] "POST /set_configs HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:20:44] "POST /set_configs HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:20:49] "POST /set_configs HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:20:50] "POST /set_configs HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:20:50] "POST /set_configs HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:21:01] "POST /set_configs HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:22:50] "POST /set_configs HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:22:51] "GET /?default_height=1.0&default_velocity=0.2&default_hold_time=2.0 HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:22:51] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:22:51] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:22:55] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:22:55] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:22:55] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:22:55] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:25:42] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:25:42] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:25:42] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:25:42] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:25:44] "GET /?default_height=1.0&default_velocity=0.2&default_hold_time=2.0 HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:25:44] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:25:44] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:26:08] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:26:08] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:26:08] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:26:09] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:26:28] "GET /?default_height=1.0&default_velocity=0.2&default_hold_time=2.0 HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:26:28] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:26:28] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:28:26] "GET /?default_height=1.0&default_velocity=0.2&default_hold_time=2.0 HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:28:26] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:28:26] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:33:43] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:33:43] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:33:43] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:33:44] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:33:49] "POST /set_configs HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:33:51] "GET /?default_height=1.0&default_velocity=0.2&default_hold_time=2.0 HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:33:51] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:33:51] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
 INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on all addresses (0.0.0.0)
  * Running on http://127.0.0.1:8080
  * Running on http://192.168.43.162:8080
 INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:28:36] "GET / HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:28:36] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:28:36] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:28:36] "GET / HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:28:37] "GET /status HTTP/1.1" 200 -
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 136-684-303
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:41:09] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:41:09] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:41:09] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:41:10] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:41:10] "GET /?default_height=1.0&default_velocity=0.2&default_hold_time=2.0 HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:41:10] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:41:10] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:41:23] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:41:23] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:41:23] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:41:23] "GET / HTTP/1.1" 200 -
 INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on all addresses (0.0.0.0)
  * Running on http://127.0.0.1:8080
  * Running on http://192.168.43.162:8080
 INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:28:44] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:28:44] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:28:45] "GET / HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:28:45] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:28:45] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:28:45] "GET / HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:28:46] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:28:46] "POST /trigger_button_change HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:28:47] "POST /clear_event HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:28:47] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:28:47] "POST /trigger_button_change HTTP/1.1" 200 -
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 136-684-303
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:59:47] "GET /?default_height=1.0&default_velocity=0.2&default_hold_time=2.0 HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:59:47] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 11:59:47] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:59:50] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:59:50] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:59:50] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 11:59:50] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 12:00:26] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 12:00:26] "GET /static/css/style.css HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 12:00:26] "GET /static/js/app.js HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 12:00:26] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 12:00:35] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 12:00:35] "GET /static/css/style.css HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 12:00:35] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 12:00:35] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 12:00:49] "GET /?default_height=1.0&default_velocity=0.2&default_hold_time=2.0 HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 12:00:49] "GET /static/css/style.css HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 12:00:49] "GET /static/js/app.js HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 12:00:53] "[35m[1mPOST /set_configs HTTP/1.1[0m" 500 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 12:00:54] "[35m[1mPOST /set_configs HTTP/1.1[0m" 500 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 12:00:55] "[35m[1mPOST /set_configs HTTP/1.1[0m" 500 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 12:00:55] "[35m[1mPOST /set_configs HTTP/1.1[0m" 500 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 12:00:55] "[35m[1mPOST /set_configs HTTP/1.1[0m" 500 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.28.13:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 136-684-303
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:14:51] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:14:51] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:14:51] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:14:51] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:14:57] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:14:57] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:14:57] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:14:57] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:14:58] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:14:58] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:14:58] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:14:58] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.28.13:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 136-684-303
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:15:56] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:15:57] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:15:57] "GET /static/js/app.js HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:15:57] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:16:00] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:16:00] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:16:00] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:16:00] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.28.13:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 136-684-303
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:19:29] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:19:29] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:19:29] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:19:30] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.28.13:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 136-684-303
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:31:41] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:31:41] "GET /static/js/app.js HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:31:41] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:31:41] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.28.13:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 136-684-303
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:34:30] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:34:31] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:34:31] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:34:31] "GET / HTTP/1.1" 200 -
 INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on all addresses (0.0.0.0)
  * Running on http://127.0.0.1:8080
  * Running on http://192.168.43.162:8080
 INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:29:10] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:29:10] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:192.168.43.1 - - [14/Jan/2025 12:29:10] "GET / HTTP/1.1" 200 -
-INFO:werkzeug:192.168.43.1 - - [14/Jan/2025 12:29:10] "GET /static/js/app.js HTTP/1.1" 200 -
-INFO:werkzeug:192.168.43.1 - - [14/Jan/2025 12:29:10] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:192.168.43.1 - - [14/Jan/2025 12:29:10] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:29:11] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:29:12] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:192.168.43.1 - - [14/Jan/2025 12:29:12] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:192.168.43.1 - - [14/Jan/2025 12:29:12] "POST /trigger_button_change HTTP/1.1" 200 -
-INFO:werkzeug:192.168.43.1 - - [14/Jan/2025 12:29:12] "POST /clear_event HTTP/1.1" 200 -
-INFO:werkzeug:192.168.43.1 - - [14/Jan/2025 12:29:12] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:29:12] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:192.168.43.1 - - [14/Jan/2025 12:29:13] "POST /trigger_button_change HTTP/1.1" 200 -
-INFO:werkzeug:192.168.43.1 - - [14/Jan/2025 12:29:13] "POST /clear_event HTTP/1.1" 200 -
-INFO:werkzeug:192.168.43.1 - - [14/Jan/2025 12:29:13] "POST /trigger_button_change HTTP/1.1" 200 -
-INFO:werkzeug:192.168.43.1 - - [14/Jan/2025 12:29:13] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [14/Jan/2025 12:29:13] "GET /status HTTP/1.1" 200 -
-INFO:werkzeug:192.168.43.1 - - [14/Jan/2025 12:29:14] "POST /clear_event HTTP/1.1" 200 -
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 136-684-303
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:35:06] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:35:06] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:35:06] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 16:35:06] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 16:35:09] "GET /?default_height=1.0&default_velocity=0.2&default_hold_time=2.0 HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 16:35:09] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 16:35:10] "GET /static/js/app.js HTTP/1.1" 200 -
+INFO:werkzeug:192.168.43.1 - - [15/Jan/2025 16:35:10] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.43.162:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 136-684-303
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 17:12:01] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 17:12:01] "GET /static/js/app.js HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 17:12:01] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 17:12:01] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.43.162:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 136-684-303
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 17:14:54] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 17:14:54] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 17:14:54] "GET /static/js/app.js HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 17:14:55] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 17:14:57] "[35m[1mPOST /set_configs HTTP/1.1[0m" 500 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 17:14:58] "[35m[1mPOST /set_configs HTTP/1.1[0m" 500 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.43.162:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 136-684-303
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 17:16:16] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 17:16:17] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 17:16:17] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 17:16:17] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 17:16:20] "[35m[1mPOST /set_configs HTTP/1.1[0m" 500 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.43.162:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 136-684-303
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 17:18:54] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 17:18:54] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 17:18:54] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 17:18:54] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:47:28] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:47:28] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:47:28] "GET /static/css/style.css HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:47:28] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.28.13:8080
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 136-684-303
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:47:59] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:47:59] "GET /static/css/style.css HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:47:59] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:47:59] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:48:28] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:48:28] "GET /static/css/style.css HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:48:28] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:48:28] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:48:46] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:48:46] "GET /static/css/style.css HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:48:46] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:48:46] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:49:05] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:49:05] "GET /static/css/style.css HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:49:05] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:49:05] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:49:50] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:49:50] "GET /static/css/style.css HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:49:50] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:49:50] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:51:00] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:51:00] "GET /static/css/style.css HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:51:00] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:51:00] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:53:48] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:53:48] "GET /static/css/style.css HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:53:48] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:53:48] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:54:50] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:54:50] "GET /static/css/style.css HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:54:50] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:54:50] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:58:13] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:58:13] "GET /static/css/style.css HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:58:13] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:58:13] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:58:41] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:58:41] "GET /static/css/style.css HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:58:41] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:58:41] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:58:59] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:58:59] "GET /static/css/style.css HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:58:59] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:58:59] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:59:15] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:59:15] "GET /static/css/style.css HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:59:15] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [15/Jan/2025 19:59:15] "GET / HTTP/1.1" 200 -
+INFO:werkzeug: * Detected change in 'C:\\Users\\Faris\\Documents\\Crazyflie\\faris-fliespot\\main.py', reloading
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 136-684-303

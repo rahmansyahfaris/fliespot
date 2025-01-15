@@ -1,14 +1,42 @@
 import tkinter as tk
 from multiprocessing import Process, Manager
-import flask
+from flask import Flask, jsonify, request, render_template
+from multiprocessing import Event
+import logging
 import crazy_flight, crazy_camera, esp_alarm_trigger
 #from test_dev_files.crazy_flight_variations import crazy_flight_a, crazy_flight_b, crazy_flight_c # for control testing purposes
 from threading import Thread
 import register_commands
-import webapp.crazy_webapp as crazy_webapp
 
 processes = [] # to list all child processes so that we can close all of them at once or do something about them
 threads = [] # to list all the threads
+
+app = Flask(__name__, template_folder="webapp/templates", static_folder="webapp/static") # flask app server
+
+# Flask Routes Functions:
+# Default configuration values
+
+@app.route("/")
+def index():
+    return render_template("index.html", configurations=common_var)
+
+@app.route("/set_configs", methods=["POST"])
+def set_configs():
+    global configurations
+    # Get the new configurations from the request form data
+    new_configs = request.form.to_dict()
+
+    # Update configurations with the new values
+    for key, value in new_configs.items():
+        try:
+            configurations[key] = float(value)  # Convert values to float if possible
+        except ValueError:
+            configurations[key] = value  # Leave as string if conversion fails
+
+    # Return a success message
+    return jsonify({
+        "message": f"Configurations updated: {configurations}"
+    })
 
 def clear_events(events):
     for event in events:
@@ -40,19 +68,15 @@ def crazyWait(common_event, common_var):
             crazyCameraProcess.join()
         print("Crazy Camera Process Terminated")
         processes.remove(crazyCameraProcess)
-    if common_var['extras']['webapp_enabled']:
-        if crazyWebAppProcess.is_alive():
-            crazyWebAppProcess.terminate()
-            crazyWebAppProcess.join()
-        print("Crazy Web App Process Terminated")
-        processes.remove(crazyWebAppProcess)
     common_event['finishESPAlarm'].set()
     threads.remove(crazyThread)
-    # flyButton.config(text="Fly",command=startCrazyFlight) # reset the button (commented because not thread-safe
-    # use the code below (root.after) instead for thread safety and this should be used for all elements outside the
-    # main thread like this one crazyFlightWait which is a function that will be run as a thread)
-    if not common_event["shutdown"].is_set():
-        root.after(0, lambda: flyButton.config(text="Fly!", command=startCrazyFlight, state="normal")) # reset the button
+    
+    if common_var['extras']['tkinter_instead']:
+        # flyButton.config(text="Fly",command=startCrazyFlight) # reset the button (commented because not thread-safe
+        # use the code below (root.after) instead for thread safety and this should be used for all elements outside the
+        # main thread like this one crazyFlightWait which is a function that will be run as a thread)
+        if not common_event["shutdown"].is_set():
+            root.after(0, lambda: flyButton.config(text="Fly!", command=startCrazyFlight, state="normal")) # reset the button
     return
 
 def ESPAlarm(common_event, common_var): # thread to poll and trigger ESP32 alarm
@@ -78,9 +102,7 @@ def startCrazyFlight():
                   common_event['cameraAbortEvent'],
                   common_event['objectDetectedEvent'],
                   common_event['triggerESPAlarm'],
-                  common_event['finishESPAlarm'],
-                  common_event['startFromWebApp'],
-                  common_event['finishFromWebApp']])
+                  common_event['finishESPAlarm']])
     
     # Process monitoring thread
     crazyThread = Thread(target=crazyWait, args=(common_event, common_var,))
@@ -103,19 +125,16 @@ def startCrazyFlight():
         crazyCameraProcess = Process(target=crazy_camera.crazyCamera, args=(common_event, common_var,))
         crazyCameraProcess.start()
         processes.append(crazyCameraProcess)
-    if common_var['extras']['webapp_enabled']:
-        print("Starting Web App")
-        crazyWebAppProcess = Process(target=crazy_webapp.webAppServer, args=(common_event, common_var,))
-        crazyWebAppProcess.start()
-        processes.append(crazyWebAppProcess)
 
     # change button to now function as abort/cancel
-    flyButton.config(text="Stop",command=lambda: stopCrazyFlight(common_event))
+    if common_var['extras']['tkinter_instead']:
+        flyButton.config(text="Stop",command=lambda: stopCrazyFlight(common_event))
 
     return
 
 def stopCrazyFlight(common_event):
-    flyButton.config(text="Terminating...", state="disabled") # button disabled waiting
+    if common_var['extras']['tkinter_instead']:
+        flyButton.config(text="Terminating...", state="disabled") # button disabled waiting
     common_event['crazyAbortEvent'].set()
     # the event.set is to stop the crazyFlightThread (crazyFlightPolling function)
     # that contains the rest of the finishing tasks like resetting the buttons, etc
@@ -125,7 +144,8 @@ def stopCrazyFlight(common_event):
 def forceStop(common_event):
     common_event["finishCrazyFlight"].set()
     common_event["finishCrazyCamera"].set()
-
+    
+# Tkinter GUI function:
 def createTkinterGUI():
     global root, flyButton, displayURI, entryURI
 
@@ -208,8 +228,6 @@ if __name__ == "__main__":
     common_event['finishCrazyCamera'] = manager.Event() # event to indicate that crazyCameraProcess has finished/returned
     common_event['triggerESPAlarm'] = manager.Event() # event to trigger ESP32 Alarm
     common_event['finishESPAlarm'] = manager.Event() # event to stop ESP32 Alarm thread (espThread)
-    common_event['startFromWebApp'] = manager.Event() # event to start using web app
-    common_event['finishFromWebApp'] = manager.Event() # event to finish using web app
     common_event['shutdown'] = manager.Event() # event to indicate that close button is pressed
 
     common_var = manager.dict() # dictionary for shared variables across processes and threads
@@ -231,8 +249,6 @@ if __name__ == "__main__":
     """
     # Command Registering
     common_var['command'] = register_commands.load_yaml_config('config/command.yaml')
-    common_var['command'] = register_commands.register_inputs(f"{common_var['command']['command_directory']}{common_var['command']['command']}",
-                                                              common_var)
 
     # debug print to see if data are correctly entered
     """
@@ -241,5 +257,11 @@ if __name__ == "__main__":
         print(common_var[config])
         print("")
     """
-
-    createTkinterGUI()
+    if common_var['extras']['tkinter_instead']:
+        common_var['command'] = register_commands.register_inputs(f"{common_var['command']['command_directory']}{common_var['command']['command']}", common_var)
+        createTkinterGUI()
+    else:
+        logging.basicConfig(filename='flask.log', level=logging.INFO)
+        #print("LOG ESTABLISHED")
+        app.run(debug=True, host='0.0.0.0', port=8080) # don't use debug (unless it is in the main block, you will encounter pickle error) and 
+        # use host 0.0.0.0 instead of 127.0.0.1 to enable all interfaces (so you can access through your phones, etc) but it makes it vulnerable
