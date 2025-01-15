@@ -20,23 +20,18 @@ app = Flask(__name__, template_folder="webapp/templates", static_folder="webapp/
 def index():
     return render_template("index.html", configurations=common_var)
 
-@app.route("/set_configs", methods=["POST"])
+@app.route('/set_configs', methods=['POST'])
 def set_configs():
-    global configurations
-    # Get the new configurations from the request form data
-    new_configs = request.form.to_dict()
 
-    # Update configurations with the new values
-    for key, value in new_configs.items():
-        try:
-            configurations[key] = float(value)  # Convert values to float if possible
-        except ValueError:
-            configurations[key] = value  # Leave as string if conversion fails
+    # Update configurations and perform necessary actions
+    common_var['config']['default_height'] = request.form.get('default_height')
+    common_var['command'] = request.form.get('command')
+
+    print(f"{request.form.get('default_height')}")
+    print(f"{common_var['config']}\n{common_var['command']}\n{common_var}")
 
     # Return a success message
-    return jsonify({
-        "message": f"Configurations updated: {configurations}"
-    })
+    return jsonify({"message": "Configurations updated successfully!"})
 
 def clear_events(events):
     for event in events:
@@ -232,13 +227,15 @@ if __name__ == "__main__":
 
     common_var = manager.dict() # dictionary for shared variables across processes and threads
 
-    common_var['uri'] = register_commands.load_yaml_config('config/uri.yaml')
+    # the manager.dict() is also required here for the nested dictionaries too, otherwise only the first dimension can
+    # have the interprocess communication, the nested dict will stay the same if you don't do this
+    common_var['uri'] = manager.dict(register_commands.load_yaml_config('config/uri.yaml'))
     displayURIText = f"URI: {common_var['uri']['uri']}"
-    common_var['config'] = register_commands.load_yaml_config('config/config.yaml')
-    common_var['camera'] = register_commands.load_yaml_config('config/camera.yaml')
-    common_var['extras'] = register_commands.load_yaml_config('config/extras.yaml')
-    common_var['esp_info'] = register_commands.load_yaml_config('config/esp_info.yaml')
-    common_var['keybinds'] = register_commands.load_yaml_config('config/keybinds.yaml')
+    common_var['config'] = manager.dict(register_commands.load_yaml_config('config/config.yaml'))
+    common_var['camera'] = manager.dict(register_commands.load_yaml_config('config/camera.yaml'))
+    common_var['extras'] = manager.dict(register_commands.load_yaml_config('config/extras.yaml'))
+    common_var['esp_info'] = manager.dict(register_commands.load_yaml_config('config/esp_info.yaml'))
+    common_var['keybinds'] = manager.dict(register_commands.load_yaml_config('config/keybinds.yaml'))
     # Get the directory where the current script (or .exe) is located (not used, only used for debugging and emergency)
     # For Command Registering
     """
@@ -248,7 +245,7 @@ if __name__ == "__main__":
         script_dir = os.path.dirname(os.path.abspath(__file__))
     """
     # Command Registering
-    common_var['command'] = register_commands.load_yaml_config('config/command.yaml')
+    common_var['command'] = manager.dict(register_commands.load_yaml_config('config/command.yaml'))
 
     # debug print to see if data are correctly entered
     """
@@ -261,6 +258,7 @@ if __name__ == "__main__":
         common_var['command'] = register_commands.register_inputs(f"{common_var['command']['command_directory']}{common_var['command']['command']}", common_var)
         createTkinterGUI()
     else:
+        common_var['command'] = register_commands.extract_text(f"{common_var['command']['command_directory']}{common_var['command']['command']}")
         logging.basicConfig(filename='flask.log', level=logging.INFO)
         #print("LOG ESTABLISHED")
         app.run(debug=True, host='0.0.0.0', port=8080) # don't use debug (unless it is in the main block, you will encounter pickle error) and 

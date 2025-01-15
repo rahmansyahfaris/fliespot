@@ -35,3 +35,22 @@ button {
 button:hover {
     background-color: #2e92f6;
 }
+
+#notification {
+    background-color: #0ec992;
+    color: rgba(255, 255, 255);
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    display: none; /* Initially hidden */
+    font-size: 16px;
+    width: max-content;
+}
+
+#notification .close-btn {
+    top: 5px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 20px;
+}

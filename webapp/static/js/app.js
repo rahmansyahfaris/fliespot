@@ -29,10 +29,21 @@ document.addEventListener("DOMContentLoaded", function() {
         const result = await response.json();
 
         // Display the success message
-        document.getElementById("notification").innerText = result.message;
+        const notificationElement = document.getElementById("notification");
+        const notificationMessage = document.getElementById("notification-message");
+        notificationMessage.innerText = result.message;
+
+        // Make the notification appear
+        notificationElement.style.display = "block";
+    });
+
+    // Add event listener to the "X" button to close the notification
+    document.getElementById("close-notification").addEventListener("click", function() {
+        const notificationElement = document.getElementById("notification");
+        notificationElement.style.display = "none"; // Hide the notification
     });
 
 
     // 1 Second Interval Refresh
-    //setInterval(function () {}, 1000); // Interval in milliseconds (1 second)
+    setInterval(function () {}, 1000); // Interval in milliseconds (1 second)
 });
