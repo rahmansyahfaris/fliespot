@@ -21,7 +21,7 @@ def crazyCamera(common_event, common_var):
     try:
         print("Connecting to socket on {}:{}...".format(deck_ip, deck_port))
         client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        client_socket.settimeout(3)
+        client_socket.settimeout(5)
         client_socket.connect((deck_ip, deck_port))
         print("Socket connected")
     except (socket.error, socket.timeout) as err:
@@ -65,6 +65,18 @@ def crazyCamera(common_event, common_var):
     isFound = False
 
     while True:
+
+        """
+        if common_var['extras']['webapp_enabled']:
+            print("Crazy Camera waiting for web app signal")
+            while True:
+                if common_event['startFromWebApp'].is_set():
+                    break
+                if common_event['crazyAbortEvent'].is_set():
+                    print("Crazy Camera aborted while waiting for web app")
+                    break
+                time.sleep(0.1)
+        """
 
         if common_event['crazyAbortEvent'].is_set() or common_event['cameraAbortEvent'].is_set():
             break

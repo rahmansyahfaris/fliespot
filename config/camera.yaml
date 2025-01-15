@@ -5,4 +5,4 @@ classes: "truecfmonochrome_classes.txt"
 classes_directory: "model/"
 detection_classes: "key"
 confidence_threshold: 0.75
-flight_on_found_stay_duration: 10
+flight_on_found_stay_duration: 30

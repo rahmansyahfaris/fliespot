@@ -149,6 +149,18 @@ def crazyFlight(common_var, common_event):
     # Connect to the Crazyflie and run the sequence
     try:
         with SyncCrazyflie(uri, cf=Crazyflie(rw_cache='./cache')) as scf:
+            
+            if common_var['extras']['webapp_enabled']:
+                print("Crazy Flight waiting for web app signal")
+                while True:
+                    if common_event['startFromWebApp'].is_set():
+                        break
+                    if common_event['crazyAbortEvent'].is_set():
+                        print("Crazy Flight aborted while waiting for web app")
+                        common_event["finishCrazyFlight"].set()
+                        return
+                    time.sleep(0.1)
+
             # Set up logging
             log_conf = LogConfig(name='Logging', period_in_ms=100)
             log_conf.add_variable('stateEstimate.x', 'float')
@@ -333,7 +345,7 @@ def crazyFlight(common_var, common_event):
                         if hold_time_elapsed > hold_duration:
                             break
                         if common_event['crazyAbortEvent'].is_set():
-                            print("FLIGHT STATUS: Aborting Flight")
+                            print("FLIGHT STATUS: Completing Flight")
                             break
                         control_velocity_x = pid_x.compute(pos_current_x)
                         control_velocity_y = pid_y.compute(pos_current_y)

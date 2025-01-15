@@ -1,9 +1,11 @@
 import tkinter as tk
 from multiprocessing import Process, Manager
+import flask
 import crazy_flight, crazy_camera, esp_alarm_trigger
 #from test_dev_files.crazy_flight_variations import crazy_flight_a, crazy_flight_b, crazy_flight_c # for control testing purposes
 from threading import Thread
 import register_commands
+import webapp.crazy_webapp as crazy_webapp
 
 processes = [] # to list all child processes so that we can close all of them at once or do something about them
 threads = [] # to list all the threads
@@ -38,6 +40,12 @@ def crazyWait(common_event, common_var):
             crazyCameraProcess.join()
         print("Crazy Camera Process Terminated")
         processes.remove(crazyCameraProcess)
+    if common_var['extras']['webapp_enabled']:
+        if crazyWebAppProcess.is_alive():
+            crazyWebAppProcess.terminate()
+            crazyWebAppProcess.join()
+        print("Crazy Web App Process Terminated")
+        processes.remove(crazyWebAppProcess)
     common_event['finishESPAlarm'].set()
     threads.remove(crazyThread)
     # flyButton.config(text="Fly",command=startCrazyFlight) # reset the button (commented because not thread-safe
@@ -60,7 +68,7 @@ def ESPAlarm(common_event, common_var): # thread to poll and trigger ESP32 alarm
 
 def startCrazyFlight():
     # basically starting the flying mechanism, polling for flight abort
-    global processes, threads, crazyThread, espThread, crazyFlightProcess, crazyCameraProcess
+    global processes, threads, crazyThread, espThread, crazyFlightProcess, crazyCameraProcess, crazyWebAppProcess
 
     # it is important to clear each events before starting again,
     # if not, it will only work the first time, the next one will be error
@@ -70,7 +78,9 @@ def startCrazyFlight():
                   common_event['cameraAbortEvent'],
                   common_event['objectDetectedEvent'],
                   common_event['triggerESPAlarm'],
-                  common_event['finishESPAlarm']])
+                  common_event['finishESPAlarm'],
+                  common_event['startFromWebApp'],
+                  common_event['finishFromWebApp']])
     
     # Process monitoring thread
     crazyThread = Thread(target=crazyWait, args=(common_event, common_var,))
@@ -90,9 +100,14 @@ def startCrazyFlight():
     else:
         common_event['finishCrazyFlight'].set()
     if common_var['camera']['camera_enabled']:
-        crazyCameraProcess = Process(target=crazy_camera.crazyCamera, args=(common_event, common_var))
+        crazyCameraProcess = Process(target=crazy_camera.crazyCamera, args=(common_event, common_var,))
         crazyCameraProcess.start()
         processes.append(crazyCameraProcess)
+    if common_var['extras']['webapp_enabled']:
+        print("Starting Web App")
+        crazyWebAppProcess = Process(target=crazy_webapp.webAppServer, args=(common_event, common_var,))
+        crazyWebAppProcess.start()
+        processes.append(crazyWebAppProcess)
 
     # change button to now function as abort/cancel
     flyButton.config(text="Stop",command=lambda: stopCrazyFlight(common_event))
@@ -141,48 +156,11 @@ def createTkinterGUI():
     forceStopButton = tk.Button(root, text="Force Stop", command=lambda: forceStop(common_event))
     forceStopButton.pack(pady=10)
 
-    #open_config_button = tk.Button(root, text="Open Config Window", command=openConfig)
-    #open_config_button.pack(pady=20)
-
     # Handle the close event to terminate the process
     root.protocol("WM_DELETE_WINDOW", on_closing)
 
     # Start the Tkinter event loop
     root.mainloop()
-
-def openConfig():
-    # Start a new window for config
-    config_window = tk.Toplevel(root)
-    config_window.title("Configuration")
-
-    config_window.geometry("300x200")
-
-    # make the window locked (modal locked window)
-    config_window.grab_set()
-
-    # Add widgets to the configuration window
-    tk.Label(config_window, text="Setting 1:").pack(pady=5)
-    entry1 = tk.Entry(config_window, width=30)
-    entry1.pack(pady=5)
-    
-    tk.Label(config_window, text="Setting 2:").pack(pady=5)
-    entry2 = tk.Entry(config_window, width=30)
-    entry2.pack(pady=5)
-    
-    # Add a save button
-    # tk.Button(config_window, text="Save Settings", command=lambda: save_settings(entry1.get(), entry2.get())).pack(pady=10)
-    
-    # Add a close button
-    tk.Button(config_window, text="Close", command=config_window.destroy).pack(pady=10)
-
-    # Extra closing procedure for unlocking window from modal locked mode
-    config_window.protocol("WM_DELETE_WINDOW", lambda: close_config_window(config_window))
-
-# Extra closing procedure function for unlocking window from modal locked mode
-def close_config_window(window):
-    # Release the modal lock and destroy the window
-    window.grab_release()
-    window.destroy()
 
 # This function execute as an additional procedure before truly closing the program
 def on_closing():
@@ -210,9 +188,9 @@ if __name__ == "__main__":
 
     # unifying events and variables in the beginning, putting them inside a shared dictionary with manager
 
-    manager = Manager() # shared events across processes and threads
+    manager = Manager() # for shared variables and events across processes and threads
 
-    common_event = manager.dict()
+    common_event = manager.dict() # dictionary for shared events across processes and threads
 
     common_event['finishCrazyFlight'] = manager.Event() # event to indicate the end of crazyFlightProcess
     common_event['crazyAbortEvent'] = manager.Event()
@@ -230,9 +208,11 @@ if __name__ == "__main__":
     common_event['finishCrazyCamera'] = manager.Event() # event to indicate that crazyCameraProcess has finished/returned
     common_event['triggerESPAlarm'] = manager.Event() # event to trigger ESP32 Alarm
     common_event['finishESPAlarm'] = manager.Event() # event to stop ESP32 Alarm thread (espThread)
+    common_event['startFromWebApp'] = manager.Event() # event to start using web app
+    common_event['finishFromWebApp'] = manager.Event() # event to finish using web app
     common_event['shutdown'] = manager.Event() # event to indicate that close button is pressed
 
-    common_var = manager.dict() # shared variables across processes and threads
+    common_var = manager.dict() # dictionary for shared variables across processes and threads
 
     common_var['uri'] = register_commands.load_yaml_config('config/uri.yaml')
     displayURIText = f"URI: {common_var['uri']['uri']}"
