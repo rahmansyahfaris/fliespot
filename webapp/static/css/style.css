@@ -2,7 +2,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 20px;
     padding: 20px;
-    background-color: #f4f4f9;
+    background-color: #ffffff;
     color: #333;
 }
 
@@ -27,17 +27,27 @@ input[type="text"] {
 button {
     padding: 5px 10px;
     background-color: #0066cc;
+    transition: opacity 0.3s ease;
     color: white;
     border: none;
     cursor: pointer;
 }
 
+#toggle-advanced-configs {
+    transition: opacity 0.3s ease;
+    background-color: #333;
+}
+
+#toggle-advanced-configs:hover {
+    opacity: 0.5;
+}
+
 button:hover {
-    background-color: #2e92f6;
+    opacity: 0.5;
 }
 
 #notification {
-    background-color: #0ec992;
+    background-color: #0066cc;
     color: rgba(255, 255, 255);
     padding: 10px;
     border-radius: 5px;
@@ -53,4 +63,57 @@ button:hover {
     background: transparent;
     border: none;
     font-size: 20px;
+}
+
+#config-display {
+    display: none;
+}
+
+#crazy-start {
+    background-color: #0ec992;
+    transition: opacity 0.3s ease;
+    margin-top: 10px;
+    font-size: larger;
+}
+
+#crazy-start:hover {
+    opacity: 0.5;
+    margin-top: 10px;
+    font-size: larger;
+}
+
+#operation-display {
+    display: none;
+}
+
+#operation-button {
+    transition: opacity 0.3s ease;
+    font-size: larger;
+}
+
+#operation-button:hover {
+    opacity: 0.5;
+}
+
+/* Basic styling for a cleaner look */
+input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+}
+
+form#bullet-form label {
+    display: block;
+    margin: 5px 0;
+}
+  
+input[type="radio"] {
+    margin-right: 10px;
+}
+
+img.pixelated {
+    image-rendering: pixelated; /* Keeps the image pixelated */
+    image-rendering: crisp-edges; /* Fallback for older browsers */
+    width: 150px; /* Scale up the image */
+    height: 150px; /* Scale up the image */
+    display: block;
 }

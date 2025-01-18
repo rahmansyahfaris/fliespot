@@ -25,6 +25,7 @@ def crazyCamera(common_event, common_var):
         client_socket.connect((deck_ip, deck_port))
         print("Socket connected")
     except (socket.error, socket.timeout) as err:
+        common_event['error'].set()
         print(f"Failed to connect to socket: {err}")
         common_event['crazyAbortEvent'].set()
         common_event['finishCrazyCamera'].set()
@@ -39,6 +40,7 @@ def crazyCamera(common_event, common_var):
             while len(data) < size:
                 data.extend(client_socket.recv(size-len(data)))
         except Exception as err:
+            common_event['error'].set()
             print(f"Error: Possibly a timeout error. {err}")
             common_event['crazyAbortEvent'].set()
             common_event['finishCrazyCamera'].set()
@@ -55,6 +57,7 @@ def crazyCamera(common_event, common_var):
             # Read lines and strip newline characters
             classes = [line.strip() for line in file]
     except Exception as err:
+        common_event['error'].set()
         print(f"Crazy Camera Process Terminating due to {err}")
         common_event['crazyAbortEvent'].set()
         common_event['finishCrazyCamera'].set()
@@ -105,6 +108,7 @@ def crazyCamera(common_event, common_var):
                 #print("{}".format(meanTimePerImage)) // this was not commented initially
                 #print("{}".format(1/meanTimePerImage)) // this was not commented initially
         except Exception as err:
+            common_event['error'].set()
             print(f"Crazy Camera Process Terminating due to {err}")
             common_event['crazyAbortEvent'].set()
             common_event['finishCrazyCamera'].set()

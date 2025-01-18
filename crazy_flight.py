@@ -36,6 +36,7 @@ def crazyFlight(common_var, common_event):
     try:
         cflib.crtp.init_drivers(enable_debug_driver=False)
     except Exception as err:
+        common_event['error'].set()
         print(f"Crazy Flight Process Terminating due to {err}")
         common_event["finishCrazyFlight"].set()
         return
@@ -163,7 +164,7 @@ def crazyFlight(common_var, common_event):
             print("FLIGHT STATUS: Starting log")
             log_conf.start()
 
-            isEnteringNewMovement = True
+            #isEnteringNewMovement = True
             time.sleep(0.5)
             with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
                 isEnteringNewMovement = True
@@ -350,6 +351,7 @@ def crazyFlight(common_var, common_event):
             cs_log_file.close()
             print("STATUS: Finished")
     except Exception as err:
+        common_event['error'].set()
         print(f"Crazy Flight Process Terminating due to {err}")
         #raise(err)
         common_event["finishCrazyFlight"].set()

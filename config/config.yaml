@@ -1,4 +1,4 @@
-flight_enabled: false
+flight_enabled: true
 default_height: 1
 default_velocity: 0.1
 default_hold_time: 2

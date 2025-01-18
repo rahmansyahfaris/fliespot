@@ -1,7 +1,6 @@
 import tkinter as tk
-from multiprocessing import Process, Manager
+from multiprocessing import Process, Manager, Event
 from flask import Flask, jsonify, request, render_template
-from multiprocessing import Event
 import logging
 import crazy_flight, crazy_camera, esp_alarm_trigger
 #from test_dev_files.crazy_flight_variations import crazy_flight_a, crazy_flight_b, crazy_flight_c # for control testing purposes
@@ -24,14 +23,48 @@ def index():
 def set_configs():
 
     # Update configurations and perform necessary actions
-    common_var['config']['default_height'] = request.form.get('default_height')
-    common_var['command'] = request.form.get('command')
+    common_var['config']['default_height'] = float(request.form.get('default_height'))
+    common_var['config']['default_velocity'] = float(request.form.get('default_velocity'))
+    common_var['config']['default_hold_time'] = float(request.form.get('default_hold_time'))
+    common_var['config']['flight_enabled'] = bool(request.form.get('flight_enabled'))
+    common_var['camera']['camera_enabled'] = bool(request.form.get('camera_enabled'))
+    common_var['extras']['esp_enabled'] = bool(request.form.get('esp_enabled'))
+    common_var['config']['default_yaw_rate'] = float(request.form.get('default_yaw_rate'))
+    common_var['config']['initial_pause_duration'] = float(request.form.get('initial_pause_duration'))
+    common_var['camera']['detection_classes'] = request.form.get('detection_classes')
+    common_var['camera']['confidence_threshold'] = float(request.form.get('confidence_threshold'))
+    common_var['camera']['flight_on_found_stay_duration'] = float(request.form.get('flight_on_found_stay_duration'))
+    common_var['command'] = request.form.get('command').replace('\r\n', '\n')
 
-    print(f"{request.form.get('default_height')}")
-    print(f"{common_var['config']}\n{common_var['command']}\n{common_var}")
+    print(request.form.to_dict)
+    #print(common_var)
 
     # Return a success message
     return jsonify({"message": "Configurations updated successfully!"})
+
+@app.route('/crazy_start', methods=['GET'])
+def web_crazy_start():
+    if common_event['ready'].is_set() and not common_event['error'].is_set():
+        common_event['ready'].clear()
+        startCrazyFlight()
+        return jsonify({"status": "Started"})
+    else:
+        return jsonify({"status": "Not started (not ready or busy)"})
+    
+@app.route('/crazy_stop', methods=['GET'])
+def web_crazy_stop():
+    if not common_event['crazyAbortEvent'].is_set():
+        stopCrazyFlight(common_event)
+        return jsonify({"status": "Stopped"})
+    else:
+        return jsonify({"status": "Not stopped (busy)"})
+
+@app.route('/crazy_check', methods=['GET'])
+def crazy_check():
+    return jsonify({"ready":  common_event['ready'].is_set(),
+                    "error_occurred": common_event['error'].is_set(),
+                    "aborted": common_event['crazyAbortEvent'].is_set(),
+                    "detected": common_event['objectDetectedEvent'].is_set()})
 
 def clear_events(events):
     for event in events:
@@ -64,6 +97,18 @@ def crazyWait(common_event, common_var):
         print("Crazy Camera Process Terminated")
         processes.remove(crazyCameraProcess)
     common_event['finishESPAlarm'].set()
+    # it is important to clear each events before starting again,
+    # if not, it will only work the first time, the next one will be error
+    clear_events([common_event['finishCrazyFlight'],
+                  common_event['crazyAbortEvent'],
+                  common_event['finishCrazyCamera'],
+                  common_event['cameraAbortEvent'],
+                  common_event['objectDetectedEvent'],
+                  common_event['triggerESPAlarm'],
+                  common_event['finishESPAlarm'],
+                  common_event['error']])
+    
+    common_var['command'] = common_var['command_temp'] # returning commands into text format
     threads.remove(crazyThread)
     
     if common_var['extras']['tkinter_instead']:
@@ -72,6 +117,8 @@ def crazyWait(common_event, common_var):
         # main thread like this one crazyFlightWait which is a function that will be run as a thread)
         if not common_event["shutdown"].is_set():
             root.after(0, lambda: flyButton.config(text="Fly!", command=startCrazyFlight, state="normal")) # reset the button
+    
+    common_event['ready'].set()
     return
 
 def ESPAlarm(common_event, common_var): # thread to poll and trigger ESP32 alarm
@@ -87,17 +134,13 @@ def ESPAlarm(common_event, common_var): # thread to poll and trigger ESP32 alarm
 
 def startCrazyFlight():
     # basically starting the flying mechanism, polling for flight abort
-    global processes, threads, crazyThread, espThread, crazyFlightProcess, crazyCameraProcess, crazyWebAppProcess
+    global processes, threads, crazyThread, espThread, crazyFlightProcess, crazyCameraProcess
 
-    # it is important to clear each events before starting again,
-    # if not, it will only work the first time, the next one will be error
-    clear_events([common_event['finishCrazyFlight'],
-                  common_event['crazyAbortEvent'],
-                  common_event['finishCrazyCamera'],
-                  common_event['cameraAbortEvent'],
-                  common_event['objectDetectedEvent'],
-                  common_event['triggerESPAlarm'],
-                  common_event['finishESPAlarm']])
+    if not common_var['extras']['tkinter_instead']:
+        common_var['command_temp'] = common_var['command']
+        common_var['command'] = register_commands.register_string(command_str=common_var['command'],
+                                                                  common_var=common_var)
+    #print(common_var)
     
     # Process monitoring thread
     crazyThread = Thread(target=crazyWait, args=(common_event, common_var,))
@@ -223,6 +266,9 @@ if __name__ == "__main__":
     common_event['finishCrazyCamera'] = manager.Event() # event to indicate that crazyCameraProcess has finished/returned
     common_event['triggerESPAlarm'] = manager.Event() # event to trigger ESP32 Alarm
     common_event['finishESPAlarm'] = manager.Event() # event to stop ESP32 Alarm thread (espThread)
+    common_event['ready'] = manager.Event() # event that indicates ready to operate
+    #common_event['busy'] = manager.Event() # event that indicates the program is busy and shouldn't get any updates
+    common_event['error'] = manager.Event() # event that indicates that error occured
     common_event['shutdown'] = manager.Event() # event to indicate that close button is pressed
 
     common_var = manager.dict() # dictionary for shared variables across processes and threads
@@ -246,6 +292,7 @@ if __name__ == "__main__":
     """
     # Command Registering
     common_var['command'] = manager.dict(register_commands.load_yaml_config('config/command.yaml'))
+    common_var['command_temp'] = None
 
     # debug print to see if data are correctly entered
     """
@@ -260,6 +307,8 @@ if __name__ == "__main__":
     else:
         common_var['command'] = register_commands.extract_text(f"{common_var['command']['command_directory']}{common_var['command']['command']}")
         logging.basicConfig(filename='flask.log', level=logging.INFO)
+        common_event['ready'].set()
         #print("LOG ESTABLISHED")
+        #print(common_var)
         app.run(debug=True, host='0.0.0.0', port=8080) # don't use debug (unless it is in the main block, you will encounter pickle error) and 
         # use host 0.0.0.0 instead of 127.0.0.1 to enable all interfaces (so you can access through your phones, etc) but it makes it vulnerable
