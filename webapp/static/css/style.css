@@ -72,13 +72,11 @@ button:hover {
 #crazy-start {
     background-color: #0ec992;
     transition: opacity 0.3s ease;
-    margin-top: 10px;
     font-size: larger;
 }
 
 #crazy-start:hover {
     opacity: 0.5;
-    margin-top: 10px;
     font-size: larger;
 }
 
@@ -116,4 +114,16 @@ img.pixelated {
     width: 150px; /* Scale up the image */
     height: 150px; /* Scale up the image */
     display: block;
+}
+
+#detection-classes {
+    width: 100px;
+    font-size: medium;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+#class-img {
+    width: 150px;
+    height: 150px;
 }

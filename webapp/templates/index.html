@@ -8,94 +8,90 @@
 </head>
 <body>
     <div id="config-display">
-        <h1>Configurations</h1>
+        <h1>Choose Object to Find</h1>
+
+        <div style="margin-top: 35px;">
+            <img id="class-img">
+        </div>
 
         <div style="margin-top: 10px; margin-bottom: 10px;">
-
-            <!-- Dropdown Trigger -->
-            <button id="toggle-advanced-configs">Advanced Configurations</button><br><br>
-
-            <label>Choose Object Type to Detect:</label><br>
-            <form id="config-form">
-                <label>
-                    <input type="radio" name="detection_classes" value="phone" 
-                           {% if configurations['camera']['detection_classes'] == 'phone' %}checked{% endif %}>
-                    phone
-                </label>
-                <label>
-                    <input type="radio" name="detection_classes" value="bottle" 
-                           {% if configurations['camera']['detection_classes'] == 'bottle' %}checked{% endif %}>
-                    bottle
-                </label>
-                <label>
-                    <input type="radio" name="detection_classes" value="key" 
-                           {% if configurations['camera']['detection_classes'] == 'key' %}checked{% endif %}>
-                    key
-                </label>
-                <label>
-                    <input type="radio" name="detection_classes" value="wallet" 
-                           {% if configurations['camera']['detection_classes'] == 'wallet' %}checked{% endif %}>
-                    wallet
-                </label><br><br>
-
-                <!-- Hidden Dropdown for Advanced Configurations -->
-                <div id="advanced-configs" style="display: none; margin-top: 10px;">
-                    <label for="flight_enabled">Enable Flight:</label>
-                    <input type="checkbox" id="flight_enabled" name="flight_enabled" 
-                        value="1" {{ 'checked' if configurations['config']['flight_enabled'] else '' }}><br>
-                    <label for="camera_enabled">Enable Object Detection:</label>
-                    <input type="checkbox" id="camera_enabled" name="camera_enabled" 
-                        value="1" {{ 'checked' if configurations['camera']['camera_enabled'] else '' }}><br>
-                    <label for="esp_enabled">Enable Alarm:</label>
-                    <input type="checkbox" id="esp_enabled" name="esp_enabled" 
-                        value="1" {{ 'checked' if configurations['extras']['esp_enabled'] else '' }}><br><br>
-                    <label for="command">Commands:</label><br>
-                    <textarea id="command" name="command" 
-                        placeholder="Enter commands here..." 
-                        rows="5" cols="40">{{ configurations['command'] }}</textarea><br>
-                    <label for="default_height">Default Height:</label><br>
-                    <input type="text" id="default_height" name="default_height" 
-                        value="{{ configurations['config']['default_height'] }}" 
-                        placeholder="e.g., 1.0" /><br>
-                    <label for="default_velocity">Default Velocity:</label><br>
-                    <input type="text" id="default_velocity" name="default_velocity" 
-                        value="{{ configurations['config']['default_velocity'] }}" 
-                        placeholder="e.g., 0.2" /><br>
-                    <label for="default_hold_time">Default Hold Duration:</label><br>
-                    <input type="text" id="default_hold_time" name="default_hold_time" 
-                        value="{{ configurations['config']['default_hold_time'] }}" 
-                        placeholder="e.g., 2.0" /><br>
-                    <label for="default_yaw_rate">Default Yaw Rate:</label><br>
-                    <input type="text" id="default_yaw_rate" name="default_yaw_rate" 
-                        value="{{ configurations['config']['default_yaw_rate'] }}" 
-                        placeholder="e.g., 72.0" /><br>
-                    <label for="initial_pause_duration">Initial Pause Duration:</label><br>
-                    <input type="text" id="initial_pause_duration" name="initial_pause_duration" 
-                        value="{{ configurations['config']['initial_pause_duration'] }}" 
-                        placeholder="e.g., 5.0" /><br>
-                    <label for="confidence_threshold">Confidence Threshold:</label><br>
-                    <input type="text" id="confidence_threshold" name="confidence_threshold" 
-                        value="{{ configurations['camera']['confidence_threshold'] }}" 
-                        placeholder="e.g., 0.75" /><br>
-                    <label for="flight_on_found_stay_duration">Detection Pause Duration:</label><br>
-                    <input type="text" id="flight_on_found_stay_duration" name="flight_on_found_stay_duration" 
-                        value="{{ configurations['camera']['flight_on_found_stay_duration'] }}" 
-                        placeholder="e.g., 30.0" /><br>
-
-                </div>
-                
-                <button type="submit">Apply Configurations</button>
+            <form id="config-form-classes">
+                <select id="detection-classes" name="detection_classes" style="margin-top: 5px;">
+                    <option value="phone" {% if configurations['camera']['detection_classes'] == 'phone' %}selected{% endif %}>
+                        Phone
+                    </option>
+                    <option value="bottle" {% if configurations['camera']['detection_classes'] == 'bottle' %}selected{% endif %}>
+                        Bottle
+                    </option>
+                    <option value="key" {% if configurations['camera']['detection_classes'] == 'key' %}selected{% endif %}>
+                        Key
+                    </option>
+                    <option value="wallet" {% if configurations['camera']['detection_classes'] == 'wallet' %}selected{% endif %}>
+                        Wallet
+                    </option>
+                </select><br><br>
             </form>
+        </div>
+            <!-- Start Button -->
+            <br><button id="crazy-start">Start</button><br><br>
+            <!-- Toggle Advanced Configs Dropdown -->
+            <button id="toggle-advanced-configs">Advanced Configurations</button><br><br>
+            <!-- Hidden Dropdown for Advanced Configurations -->
+        <div>
+            <form id="config-form">
+            <div id="advanced-configs" style="display: none; margin-top: 10px;">
+                <label for="flight_enabled">Enable Flight:</label>
+                <input type="checkbox" id="flight_enabled" name="flight_enabled" 
+                    value="1" {{ 'checked' if configurations['config']['flight_enabled'] else '' }}><br>
+                <label for="camera_enabled">Enable Object Detection:</label>
+                <input type="checkbox" id="camera_enabled" name="camera_enabled" 
+                    value="1" {{ 'checked' if configurations['camera']['camera_enabled'] else '' }}><br>
+                <label for="esp_enabled">Enable Alarm:</label>
+                <input type="checkbox" id="esp_enabled" name="esp_enabled" 
+                    value="1" {{ 'checked' if configurations['extras']['esp_enabled'] else '' }}><br><br>
+                <label for="command">Commands:</label><br>
+                <textarea id="command" name="command" 
+                    placeholder="Enter commands here..." 
+                    rows="5" cols="40">{{ configurations['command'] }}</textarea><br>
+                <label for="default_height">Default Height:</label><br>
+                <input type="text" id="default_height" name="default_height" 
+                    value="{{ configurations['config']['default_height'] }}" 
+                    placeholder="e.g., 1.0" /><br>
+                <label for="default_velocity">Default Velocity:</label><br>
+                <input type="text" id="default_velocity" name="default_velocity" 
+                    value="{{ configurations['config']['default_velocity'] }}" 
+                    placeholder="e.g., 0.2" /><br>
+                <label for="default_hold_time">Default Hold Duration:</label><br>
+                <input type="text" id="default_hold_time" name="default_hold_time" 
+                    value="{{ configurations['config']['default_hold_time'] }}" 
+                    placeholder="e.g., 2.0" /><br>
+                <label for="default_yaw_rate">Default Yaw Rate:</label><br>
+                <input type="text" id="default_yaw_rate" name="default_yaw_rate" 
+                    value="{{ configurations['config']['default_yaw_rate'] }}" 
+                    placeholder="e.g., 72.0" /><br>
+                <label for="initial_pause_duration">Initial Pause Duration:</label><br>
+                <input type="text" id="initial_pause_duration" name="initial_pause_duration" 
+                    value="{{ configurations['config']['initial_pause_duration'] }}" 
+                    placeholder="e.g., 5.0" /><br>
+                <label for="confidence_threshold">Confidence Threshold:</label><br>
+                <input type="text" id="confidence_threshold" name="confidence_threshold" 
+                    value="{{ configurations['camera']['confidence_threshold'] }}" 
+                    placeholder="e.g., 0.75" /><br>
+                <label for="flight_on_found_stay_duration">Detection Pause Duration:</label><br>
+                <input type="text" id="flight_on_found_stay_duration" name="flight_on_found_stay_duration" 
+                    value="{{ configurations['camera']['flight_on_found_stay_duration'] }}" 
+                    placeholder="e.g., 30.0" />
+            </div><br>
+            </form>
+        </div>
+            <!-- Submit the configs -->
+            <button id="submit-form">Apply Configurations</button><br>
             <!-- Notification Area -->
             <div id="notification">
                 <span id="notification-message"></span>
                 <span>&nbsp;&nbsp;&nbsp;</span>
-                <span id="close-notification">&times;</span>
+                <span id="close-notification">&times;</span><br>
             </div>
-            <button id="crazy-start">Start</button>
-        </div>
-        
-
     </div>
 
     <div id="operation-display">
